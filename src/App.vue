@@ -10,5 +10,13 @@
     <hr />
 
     <router-view></router-view>
+
   </div>
+
+  <hr>
+
 </template>
+
+<script>
+
+</script>
