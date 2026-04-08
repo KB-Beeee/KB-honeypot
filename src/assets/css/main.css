@@ -1,0 +1,17 @@
+/* 지마켓 산스 Medium 폰트 불러오기 */
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 모든 요소에 폰트 강제 적용 (!important로 부트스트랩 기본 폰트 덮어쓰기) */
+* {
+    font-family: 'GmarketSansMedium', sans-serif !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
