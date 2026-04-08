@@ -1,0 +1,97 @@
+/* 카드와 타이틀을 하나로 묶는 그룹 */
+.content-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
+}
+
+.monthly-honeypot {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-left: 5px;
+}
+
+.monthly-text {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.month-icon {
+  width: 32px;
+  height: 32px;
+  margin-left: 8px;
+}
+
+.card-container {
+  display: flex;
+  gap: 15px;
+}
+
+.status-card {
+  width: 220px;
+  height: 340px;
+  border-radius: 25px;
+  border: 1.5px solid #84a59d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 30px 15px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  width: 110px;
+  height: 110px;
+  background-color: #f5cac3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 25px;
+  flex-shrink: 0;
+  box-shadow:
+    8px 12px 18px rgba(0, 0, 0, 0.25),
+    inset 4px 6px 10px rgba(255, 255, 255, 0.5),
+    inset -4px -6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-amount {
+  font-size: 1.55rem;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.card-illustration {
+  width: 80px;
+  height: auto;
+  margin-top: auto;
+}
+
+.income {
+  background: linear-gradient(to bottom, #ffffff 70%, #f5cac3 100%);
+}
+.income .card-amount {
+  color: #ff3b30;
+}
+
+.expense {
+  background: linear-gradient(to bottom, #ffffff 70%, #f5cac3 100%);
+}
+.expense .card-amount {
+  color: #4a69ff;
+}
+
+.profit {
+  background: linear-gradient(to bottom, #ffffff 70%, #f5cac3 100%);
+}
+.profit .card-amount {
+  color: #222;
+}
