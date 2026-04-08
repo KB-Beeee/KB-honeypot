@@ -53,13 +53,13 @@
         <div class="category-panel" v-if="transactionType">
           <div class="category-list">
             <div
-              v-for="item in currentCategories"
-              :key="item"
+              v-for="name in currentCategoryNames"
+              :key="name"
               class="category-item"
-              :class="{ selected: selectedCategory === item }"
-              @click="selectedCategory = item"
+              :class="{ selected: selectedCategory === name }"
+              @click="selectedCategory = name"
             >
-              {{ item }}
+              {{ name }}
             </div>
           </div>
         </div>
@@ -91,13 +91,15 @@ export default {
     return {
       transactionDate: new Date().toISOString().substr(0, 10),
       rawAmount: 0,
-      transactionType: '',
-      selectedCategory: '',
+      transactionType: '', // 'income' 또는 'expense'
+      selectedCategory: '', // 사용자가 클릭한 카테고리 '이름'
       memo: '',
-      categoryData: {
-        income: ['용돈', '월급', '기타'],
-        expense: ['식비', '교통', '공과금', '여가', '건강', '기타'],
+      // 서버에서 가져온 카테고리 객체들을 타입별로 저장
+      categoryGroups: {
+        income: [],
+        expense: [],
       },
+      rawCategories: [], // 전체 카테고리 원본 (id 파싱용)
     };
   },
   computed: {
@@ -109,41 +111,73 @@ export default {
     displayAmount() {
       return this.rawAmount ? this.rawAmount.toLocaleString() : '';
     },
-    currentCategories() {
+    // 현재 선택된 타입에 따른 카테고리 '이름'들만 추출하여 반환
+    currentCategoryNames() {
       if (!this.transactionType) return [];
-      return this.categoryData[this.transactionType];
+      return this.categoryGroups[this.transactionType].map((cat) => cat.name);
     },
   },
+  created() {
+    this.fetchCategories();
+  },
   methods: {
+    async fetchCategories() {
+      try {
+        const response = await axios.get('http://localhost:3000/categories');
+        this.rawCategories = response.data;
+
+        // DB의 type 필드와 정확히 매칭하여 그룹핑
+        this.categoryGroups.income = this.rawCategories.filter(
+          (cat) => cat.type === 'income',
+        );
+        this.categoryGroups.expense = this.rawCategories.filter(
+          (cat) => cat.type === 'expense',
+        );
+
+        console.log('카테고리 로드 완료🍯', this.categoryGroups);
+      } catch (error) {
+        console.error('카테고리 로딩 실패🍯', error);
+      }
+    },
     handleAmountInput(e) {
       const val = e.target.value.replace(/[^0-9]/g, '');
       this.rawAmount = val ? parseInt(val, 10) : 0;
+      // 입력창에 실시간으로 콤마 적용된 값 표시
       e.target.value = this.displayAmount;
     },
     changeType(type) {
       this.transactionType = type;
-      this.selectedCategory = '';
+      this.selectedCategory = ''; // 타입 변경 시 선택 초기화
     },
     async saveData() {
+      // 1. 유효성 검사
       if (
         this.rawAmount <= 0 ||
         !this.transactionType ||
         !this.selectedCategory
       ) {
-        alert('모든 항목을 입력해주세요🍯');
+        alert('금액, 유형, 카테고리를 모두 확인해주세요🍯');
         return;
       }
 
-      // trans_id 생성 로직 (t + 타임스탬프)
-      const newTransId = `t${Date.now()}`;
+      // 2. 선택된 '이름'을 바탕으로 원본에서 실제 'id' 찾기
+      const foundCategory = this.rawCategories.find(
+        (cat) =>
+          cat.name === this.selectedCategory &&
+          cat.type === this.transactionType,
+      );
 
+      // 3. 고유 ID 생성 (t + 타임스탬프)
+      const customId = `t${Date.now()}`;
+
+      // 4. 전송 페이로드 구성
       const payload = {
-        trans_id: newTransId,
+        id: String(customId), // json-server 랜덤 ID 생성 방지용
         user_id: 'u001',
-        category_name: this.selectedCategory,
+        category_id: foundCategory ? foundCategory.id : 'unknown',
         date: this.transactionDate,
         trans_type: this.transactionType,
-        amount: this.rawAmount,
+        amount: Number(this.rawAmount),
         memo: this.memo,
       };
 
@@ -157,7 +191,7 @@ export default {
           this.resetForm();
         }
       } catch (error) {
-        console.error('데이터 저장 중 오류 발생:', error);
+        console.error('저장 실패:', error);
         alert('저장에 실패했습니다..🍯');
       }
     },
