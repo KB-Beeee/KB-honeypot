@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -122,8 +124,7 @@ export default {
       this.transactionType = type;
       this.selectedCategory = '';
     },
-    saveData() {
-      // 실제 서버 저장은 빼고, 콘솔에만 찍어서 확인해봅니다.
+    async saveData() {
       if (
         this.rawAmount <= 0 ||
         !this.transactionType ||
@@ -133,18 +134,32 @@ export default {
         return;
       }
 
-      const debugPayload = {
+      // trans_id 생성 로직 (t + 타임스탬프)
+      const newTransId = `t${Date.now()}`;
+
+      const payload = {
+        trans_id: newTransId,
+        user_id: 'u001',
+        category_name: this.selectedCategory,
         date: this.transactionDate,
+        trans_type: this.transactionType,
         amount: this.rawAmount,
-        type: this.transactionType,
-        category: this.selectedCategory,
         memo: this.memo,
       };
 
-      console.log('입력된 데이터 확인:', debugPayload);
-      alert('화면에서 입력을 완료했습니다! (콘솔 확인)🍯');
-
-      this.resetForm();
+      try {
+        const res = await axios.post(
+          'http://localhost:3000/transactions',
+          payload,
+        );
+        if (res.status === 201) {
+          alert('거래 내역이 저장되었습니다🍯');
+          this.resetForm();
+        }
+      } catch (error) {
+        console.error('데이터 저장 중 오류 발생:', error);
+        alert('저장에 실패했습니다..🍯');
+      }
     },
     resetForm() {
       this.rawAmount = 0;
