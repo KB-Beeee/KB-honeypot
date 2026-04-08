@@ -1,0 +1,50 @@
+/* 내비게이션 바 전체 레이아웃 */
+.navbar {
+  background-color: transparent;
+  padding: 0px 40px 20px 40px;
+}
+
+/* 2. 로고와 메뉴 박스 묶는 컨테이너 */
+.container-fluid {
+  display: flex;
+  align-items: center;
+}
+
+/* 오른쪽 노란색 메뉴 박스 영역 */
+.nav-links {
+  background-color: #f6bd60;
+  border-radius: 60px;
+  padding: 25px 60px;
+  margin-left: 40px;
+
+  /* 박스 내부 정렬 */
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  gap: 150px;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+
+  padding-right: 100px;
+}
+
+/* 메뉴 글자  */
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #000;
+}
+
+.navbar-brand img {
+  width: 130px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.4));
+}
