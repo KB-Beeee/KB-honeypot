@@ -13,8 +13,9 @@
 }
 
 body {
-  margin: 0;
-  padding: 0;
+    background-color: #FFF7EF;
+    margin: 0;
+    padding: 0;
 }
 
 .app-container {
