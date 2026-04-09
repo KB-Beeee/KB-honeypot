@@ -40,14 +40,20 @@ const states = reactive({
 
 // 거래 내역 url 
 const transactionUrl = 'http://localhost:3000/transactions';
+const categoryUrl = 'http://localhost:3000/categories';
 
 const fetchTransactions = async () => {
     states.isLoading = true;
     try {
         // 가져오기 
-        const response = await axios.get(transactionUrl);
-        if(response.status===200) {
-            states.transactions = response.data;
+        const [transResponse, catResponse] = await Promise.all([
+            axios.get(transactionUrl),
+            axios.get(categoryUrl)
+    ]);
+
+        if(transResponse.status === 200 && catResponse.status === 200) {
+            states.transactions = transResponse.data;
+            states.categories = catResponse.data;
 
             updateCalendarEvents(); 
         }
@@ -61,41 +67,46 @@ const fetchTransactions = async () => {
 const updateCalendarEvents = () => {
     const summary = {};
 
-    // transactions 배열 요소를 하나씩 반복해서 실행 
-states.transactions.forEach(trans => {
-    const key = `${trans.date}_${trans.trans_type}`;
-
-    if(!summary[key]) {
-        summary[key] = { start: trans.date, amount: 0, type: trans.trans_type }; 
+    const categoryTypeMap = {};
+    if (states.categories) {
+        states.categories.forEach(cat => {
+            categoryTypeMap[cat.id] = cat.type;
+        });
     }
-    summary[key].amount += trans.amount; 
 
-    
-});
-
-const list = Object.values(summary);
-
-list.sort((a, b) => {
-// 1. 둘의 타입이 같다면 순서를 바꾸지 않음 (0 반환)
-    if (a.type === b.type) {
-        return 0; 
-    }
-    // 2. a가 수입(income)이면 앞으로 보냄 (-1 반환)
-    if (a.type === 'income') {
-        return -1; 
-    }
-    // 3. 그 외의 경우(a가 지출)는 뒤로 보냄 (1 반환)
-    return 1;
+    states.transactions.forEach(trans => {
+        const currentType = categoryTypeMap[trans.category_id]; 
         
+        // 데이터에 없는 카테고리일 경우를 대비한 방어 코드
+        if (!currentType) return;
+
+        // 👇 누락되었던 key 변수 선언 추가
+        const key = `${trans.date}_${currentType}`; 
+
+        if(!summary[key]) {
+            summary[key] = { start: trans.date, amount: 0, type: currentType }; 
+        }
+        summary[key].amount += trans.amount;
     });
 
-calendarOptions.events = list.map(item => ({
-title: (item.type === 'income' ? '+' : '-') + item.amount.toLocaleString(),
-      start: item.start,
-      className: item.type === 'income' ? 'event-income' : 'event-expense',
-      // 👇 수입(income)이면 1, 지출(expense)이면 2를 부여해서 수입이 위로 가도록 설정
-      sortOrder: item.type === 'income' ? 1 : 2
-}));
+    const list = Object.values(summary);
+
+    list.sort((a, b) => {
+        if (a.type === b.type) {
+            return 0; 
+        }
+        if (a.type === 'income') {
+            return -1; 
+        }
+        return 1;
+    });
+
+    calendarOptions.events = list.map(item => ({
+        title: (item.type === 'income' ? '+' : '-') + item.amount.toLocaleString(),
+        start: item.start,
+        className: item.type === 'income' ? 'event-income' : 'event-expense',
+        sortOrder: item.type === 'income' ? 1 : 2
+    }));
 };
 
 fetchTransactions();
