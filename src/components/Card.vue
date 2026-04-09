@@ -13,7 +13,7 @@
       <h3 class="card-title">총 수입</h3>
       <p class="card-amount">{{ totalIncome.toLocaleString() }} 원</p>
       <img
-        src="@/assets/images/card_income.png"
+        src="@/assets/images/icon/money_icon.png"
         alt="Card Income"
         class="card-illustration"
       />
@@ -23,7 +23,7 @@
       <h3 class="card-title">총 지출</h3>
       <p class="card-amount">{{ totalExpense.toLocaleString() }} 원</p>
       <img
-        src="@/assets/images/card_expense.png"
+        src="@/assets/images/icon/cart_icon.png"
         alt="Card Expense"
         class="card-illustration"
       />
@@ -33,7 +33,7 @@
       <h3 class="card-title">순이익</h3>
       <p class="card-amount">{{ profit.toLocaleString() }} 원</p>
       <img
-        src="@/assets/images/card_profit.png"
+        src="@/assets/images/icon/graph_icon.png"
         alt="Card Profit"
         class="card-illustration"
       />
