@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Calendar from '../components/Calendar.vue';
+// import Calendar from '../components/Calendar.vue';
 import Card from '../components/Card.vue';
 </script>
 
@@ -8,6 +8,6 @@ import Card from '../components/Card.vue';
     <h1>🏠 홈 화면 (대시보드)</h1>
   </div>
   <!-- 캘린더 테스트용으로 넣어놨어요..! -->
-  <Calendar></Calendar>
+  <!-- <Calendar></Calendar> -->
   <Card />
 </template>
