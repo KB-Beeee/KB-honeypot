@@ -127,7 +127,9 @@ const getCategory = (categoryId) => {
 };
 
 const filteredTransactions = computed(() => {
-  let list = [...store.transactions];
+  if (!store.transactions) return [];
+
+  let list = store.transactions.filter((item) => !item.is_deleted);
 
   if (appliedFilter.value.type !== 'all') {
     list = list.filter((item) => {

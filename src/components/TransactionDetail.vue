@@ -37,7 +37,9 @@
       <hr class="divider" />
       <div class="modal-footer d-flex justify-content-center gap-3 mt-4">
         <button class="btn-action flex-grow-1">수정</button>
-        <button class="btn-action flex-grow-1">삭제</button>
+        <button class="btn-action flex-grow-1" @click="handleDelete">
+          삭제
+        </button>
       </div>
     </div>
   </div>
@@ -48,12 +50,24 @@ import { useTransactionStore } from '@/stores/transactionStore.js';
 
 const store = useTransactionStore();
 
-defineProps({
+const props = defineProps({
   isOpen: Boolean,
   transaction: Object,
 });
 
-defineEmits(['close']);
+const emit = defineEmits(['close']);
+
+const handleDelete = async () => {
+  if (confirm('이 내역을 정말 삭제하시겠습니까?')) {
+    try {
+      await store.deleteTransaction(props.transaction.id);
+      alert('삭제되었습니다');
+      emit('close');
+    } catch (error) {
+      alert('삭제 중 문제가 발생했습니다.');
+    }
+  }
+};
 
 const getCategory = (categoryId) => {
   return store.categories.find((c) => c.id === categoryId) || {};
