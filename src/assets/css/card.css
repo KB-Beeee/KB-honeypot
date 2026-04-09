@@ -95,3 +95,13 @@
 .profit .card-amount {
   color: #222;
 }
+.attendance-section {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.attendance-section {
+  margin-top: 20px;
+  width: 100%;
+}

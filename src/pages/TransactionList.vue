@@ -81,16 +81,27 @@
   ></TransactionDetail>
 
   <div class="container py-4">
-    <button class="fab-btn shadow-sm">
+    <button class="fab-btn shadow-sm" @click="isModalOpen = true">
       <span class="plus-icon">+</span>
     </button>
+  </div>
+
+  <div
+    class="modal-overlay"
+    v-if="isModalOpen"
+    @click.self="isModalOpen = false"
+  >
+    <AddTransaction @close="isModalOpen = false" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transactionStore.js';
+import AddTransaction from '@/components/AddTransaction.vue';
 import TransactionDetail from '@/components/TransactionDetail.vue';
+
+const isModalOpen = ref(false);
 
 const store = useTransactionStore();
 
@@ -134,11 +145,23 @@ const filteredTransactions = computed(() => {
   });
 
   list.sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    return appliedFilter.value.sort === 'latest'
-      ? dateB - dateA
-      : dateA - dateB;
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+
+    if (dateA !== dateB) {
+      return appliedFilter.value.sort === 'latest'
+        ? dateB - dateA
+        : dateA - dateB;
+    }
+
+    const createA = new Date(a.created_at).getTime();
+    const createB = new Date(b.created_at).getTime();
+
+    if (appliedFilter.value.sort === 'latest') {
+      return createB - createA;
+    } else {
+      return createA - createB;
+    }
   });
 
   return list;
@@ -164,6 +187,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 .filter-bar {
   background-color: #f9f9fb;
   border-color: #d5d5d5 !important;
@@ -204,6 +239,9 @@ onMounted(() => {
   justify-content: center;
 
   line-height: 0;
+}
+.fab-btn:hover {
+  background-color: #da911d;
 }
 .plus-icon {
   font-size: 45px;
