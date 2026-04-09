@@ -1,7 +1,7 @@
 <template>
   <div class="transaction-container">
     <div class="header">
-      <span class="close-x">X</span>
+      <span class="close-x" @click="$emit('close')">X</span>
       <div class="date-wrapper">
         <div class="date-display">
           {{ formattedDate }}
@@ -32,7 +32,7 @@
           <div class="type-selector">
             <button
               type="button"
-              class="type-btn"
+              class="type-btn income-btn"
               :class="{ active: transactionType === 'income' }"
               @click="changeType('income')"
             >
@@ -41,7 +41,7 @@
 
             <button
               type="button"
-              class="type-btn"
+              class="type-btn expense-btn"
               :class="{ active: transactionType === 'expense' }"
               @click="changeType('expense')"
             >
@@ -197,5 +197,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../assets/css/addTransaction.css';
+@import '@/assets/css/addTransaction.css';
 </style>
