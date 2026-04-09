@@ -1,7 +1,7 @@
 <template>
   <div class="transaction-container">
     <div class="header">
-      <span class="close-x">X</span>
+      <span class="close-x" @click="$emit('close')">X</span>
       <div class="date-wrapper">
         <div class="date-display">
           {{ formattedDate }}
@@ -32,7 +32,7 @@
           <div class="type-selector">
             <button
               type="button"
-              class="type-btn"
+              class="type-btn income-btn"
               :class="{ active: transactionType === 'income' }"
               @click="changeType('income')"
             >
@@ -41,7 +41,7 @@
 
             <button
               type="button"
-              class="type-btn"
+              class="type-btn expense-btn"
               :class="{ active: transactionType === 'expense' }"
               @click="changeType('expense')"
             >
@@ -53,13 +53,13 @@
         <div class="category-panel" v-if="transactionType">
           <div class="category-list">
             <div
-              v-for="item in currentCategories"
-              :key="item"
+              v-for="name in currentCategoryNames"
+              :key="name"
               class="category-item"
-              :class="{ selected: selectedCategory === item }"
-              @click="selectedCategory = item"
+              :class="{ selected: selectedCategory === name }"
+              @click="selectedCategory = name"
             >
-              {{ item }}
+              {{ name }}
             </div>
           </div>
         </div>
@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -92,10 +94,11 @@ export default {
       transactionType: '',
       selectedCategory: '',
       memo: '',
-      categoryData: {
-        income: ['용돈', '월급', '기타'],
-        expense: ['식비', '교통', '공과금', '여가', '건강', '기타'],
+      categoryGroups: {
+        income: [],
+        expense: [],
       },
+      rawCategories: [],
     };
   },
   computed: {
@@ -107,12 +110,30 @@ export default {
     displayAmount() {
       return this.rawAmount ? this.rawAmount.toLocaleString() : '';
     },
-    currentCategories() {
+    currentCategoryNames() {
       if (!this.transactionType) return [];
-      return this.categoryData[this.transactionType];
+      return this.categoryGroups[this.transactionType].map((cat) => cat.name);
     },
   },
+  created() {
+    this.fetchCategories();
+  },
   methods: {
+    async fetchCategories() {
+      try {
+        const response = await axios.get('http://localhost:3000/categories');
+        this.rawCategories = response.data;
+
+        this.categoryGroups.income = this.rawCategories.filter(
+          (cat) => cat.type === 'income',
+        );
+        this.categoryGroups.expense = this.rawCategories.filter(
+          (cat) => cat.type === 'expense',
+        );
+      } catch (error) {
+        console.error('카테고리 로딩 실패🍯', error);
+      }
+    },
     handleAmountInput(e) {
       const val = e.target.value.replace(/[^0-9]/g, '');
       this.rawAmount = val ? parseInt(val, 10) : 0;
@@ -122,29 +143,50 @@ export default {
       this.transactionType = type;
       this.selectedCategory = '';
     },
-    saveData() {
-      // 실제 서버 저장은 빼고, 콘솔에만 찍어서 확인해봅니다.
+    async saveData() {
       if (
         this.rawAmount <= 0 ||
         !this.transactionType ||
         !this.selectedCategory
       ) {
-        alert('모든 항목을 입력해주세요🍯');
+        alert('금액, 유형, 카테고리를 모두 입력해주세요🍯');
         return;
       }
 
-      const debugPayload = {
+      const foundCategory = this.rawCategories.find(
+        (cat) =>
+          cat.name === this.selectedCategory &&
+          cat.type === this.transactionType,
+      );
+      const now = new Date();
+      const customId = `t${now}`;
+
+      const payload = {
+        id: String(customId),
+        user_id: 'u001',
+        category_id: foundCategory ? foundCategory.id : 'unknown',
         date: this.transactionDate,
-        amount: this.rawAmount,
-        type: this.transactionType,
-        category: this.selectedCategory,
+        amount: Number(this.rawAmount),
         memo: this.memo,
+        created_at: now.toISOString(), // ISO 표준
+        // created_at: now.toLocaleString(), // 예쁘게
+        is_deleted: false,
       };
 
-      console.log('입력된 데이터 확인:', debugPayload);
-      alert('화면에서 입력을 완료했습니다! (콘솔 확인)🍯');
-
-      this.resetForm();
+      try {
+        const res = await axios.post(
+          'http://localhost:3000/transactions',
+          payload,
+        );
+        if (res.status === 201) {
+          alert('거래 내역이 저장되었습니다🍯');
+          this.resetForm();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('저장 실패:', error);
+        alert('저장에 실패했습니다..🍯');
+      }
     },
     resetForm() {
       this.rawAmount = 0;
@@ -158,5 +200,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../assets/css/addTransaction.css';
+@import '@/assets/css/addTransaction.css';
 </style>

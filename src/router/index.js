@@ -9,12 +9,12 @@ import TransactionList from '../pages/TransactionList.vue'
 
 const routes = [
   { 
-    path: '/login', 
+    path: '/', 
     name: 'login',
     component: Login
   },
   { 
-    path: '/', 
+    path: '/home', 
     name: 'home',
     component: Home
 },
@@ -35,8 +35,8 @@ const routes = [
   //   props: true // URL의 id를 컴포넌트의 props로 전달
   // },
   { 
-    path: '/profile', 
-    name: 'profile',
+    path: '/mypage', 
+    name: 'mypage',
     component: Mypage,
   }
 ]
