@@ -91,15 +91,14 @@ export default {
     return {
       transactionDate: new Date().toISOString().substr(0, 10),
       rawAmount: 0,
-      transactionType: '', // 'income' 또는 'expense'
-      selectedCategory: '', // 사용자가 클릭한 카테고리 '이름'
+      transactionType: '',
+      selectedCategory: '',
       memo: '',
-      // 서버에서 가져온 카테고리 객체들을 타입별로 저장
       categoryGroups: {
         income: [],
         expense: [],
       },
-      rawCategories: [], // 전체 카테고리 원본 (id 파싱용)
+      rawCategories: [],
     };
   },
   computed: {
@@ -111,7 +110,6 @@ export default {
     displayAmount() {
       return this.rawAmount ? this.rawAmount.toLocaleString() : '';
     },
-    // 현재 선택된 타입에 따른 카테고리 '이름'들만 추출하여 반환
     currentCategoryNames() {
       if (!this.transactionType) return [];
       return this.categoryGroups[this.transactionType].map((cat) => cat.name);
@@ -126,15 +124,12 @@ export default {
         const response = await axios.get('http://localhost:3000/categories');
         this.rawCategories = response.data;
 
-        // DB의 type 필드와 정확히 매칭하여 그룹핑
         this.categoryGroups.income = this.rawCategories.filter(
           (cat) => cat.type === 'income',
         );
         this.categoryGroups.expense = this.rawCategories.filter(
           (cat) => cat.type === 'expense',
         );
-
-        console.log('카테고리 로드 완료🍯', this.categoryGroups);
       } catch (error) {
         console.error('카테고리 로딩 실패🍯', error);
       }
@@ -142,43 +137,38 @@ export default {
     handleAmountInput(e) {
       const val = e.target.value.replace(/[^0-9]/g, '');
       this.rawAmount = val ? parseInt(val, 10) : 0;
-      // 입력창에 실시간으로 콤마 적용된 값 표시
       e.target.value = this.displayAmount;
     },
     changeType(type) {
       this.transactionType = type;
-      this.selectedCategory = ''; // 타입 변경 시 선택 초기화
+      this.selectedCategory = '';
     },
     async saveData() {
-      // 1. 유효성 검사
       if (
         this.rawAmount <= 0 ||
         !this.transactionType ||
         !this.selectedCategory
       ) {
-        alert('금액, 유형, 카테고리를 모두 확인해주세요🍯');
+        alert('금액, 유형, 카테고리를 모두 입력해주세요🍯');
         return;
       }
 
-      // 2. 선택된 '이름'을 바탕으로 원본에서 실제 'id' 찾기
       const foundCategory = this.rawCategories.find(
         (cat) =>
           cat.name === this.selectedCategory &&
           cat.type === this.transactionType,
       );
 
-      // 3. 고유 ID 생성 (t + 타임스탬프)
       const customId = `t${Date.now()}`;
-
-      // 4. 전송 페이로드 구성
       const payload = {
-        id: String(customId), // json-server 랜덤 ID 생성 방지용
+        id: String(customId),
         user_id: 'u001',
         category_id: foundCategory ? foundCategory.id : 'unknown',
         date: this.transactionDate,
-        trans_type: this.transactionType,
         amount: Number(this.rawAmount),
         memo: this.memo,
+        created_at: new Date().toISOString().substr(0, 10),
+        is_deleted: false,
       };
 
       try {
