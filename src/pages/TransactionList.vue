@@ -53,10 +53,12 @@
         <div
           class="col-2 fw-bold text-end"
           :class="
-            item.trans_type === 'expense' ? 'text-primary' : 'text-danger'
+            getCategory(item.category_id).type === 'expense'
+              ? 'text-primary'
+              : 'text-danger'
           "
         >
-          {{ item.trans_type === 'expense' ? '-' : '+'
+          {{ getCategory(item.category_id).type === 'expense' ? '-' : '+'
           }}{{ item.amount.toLocaleString() }}
         </div>
         <div class="col ms-4 text-secondary">{{ item.memo }}</div>
@@ -98,11 +100,18 @@ const handleReset = () => {
   appliedFilter.value = { ...filterState.value };
 };
 
+const getCategory = (categoryId) => {
+  return store.categories.find((c) => c.id === categoryId) || {};
+};
+
 const filteredTransactions = computed(() => {
   let list = [...store.transactions];
 
   if (appliedFilter.value.type !== 'all') {
-    list = list.filter((item) => item.trans_type === appliedFilter.value.type);
+    list = list.filter((item) => {
+      const category = getCategory(item.category_id);
+      return category.type === appliedFilter.value.type;
+    });
   }
 
   const daysLimit = parseInt(appliedFilter.value.period);
@@ -125,8 +134,8 @@ const filteredTransactions = computed(() => {
 });
 
 onMounted(() => {
-  store.fetchTransactions();
   store.fetchCategories();
+  store.fetchTransactions();
 });
 </script>
 
