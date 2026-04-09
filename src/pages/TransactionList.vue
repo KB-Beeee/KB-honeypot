@@ -71,18 +71,26 @@
     </div>
   </div>
   <div class="container py-4">
-    <button class="fab-btn shadow-sm">
+    <button class="fab-btn shadow-sm" @click="isModalOpen = true">
       <span class="plus-icon">+</span>
     </button>
+  </div>
+  <div
+    class="modal-overlay"
+    v-if="isModalOpen"
+    @click.self="isModalOpen = false"
+  >
+    <AddTransaction @close="isModalOpen = false" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transactionStore.js';
+import AddTransaction from '@/components/AddTransaction.vue';
 
 const store = useTransactionStore();
-
+const isModalOpen = ref(false);
 const filterState = ref({
   period: '90',
   type: 'all',
@@ -140,6 +148,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 .filter-bar {
   background-color: #f9f9fb;
   border-color: #d5d5d5 !important;
