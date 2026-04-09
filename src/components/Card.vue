@@ -43,58 +43,62 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios'; // axios 임포트
+import axios from 'axios';
 
-// 1. 빈 배열로 초기화
 const transactions = ref([]);
+const categories = ref([]); // 카테고리 정보도 가져와야 합니다.
 
-// 2. 외부 JSON Server에서 데이터 가져오기
-const fetchTransactions = async () => {
+const fetchData = async () => {
   try {
-    // JSON Server 주소
-    const response = await axios.get('http://localhost:3000/transactions');
-    transactions.value = response.data;
+    // 두 데이터를 동시에 가져옵니다.
+    const [transRes, catRes] = await Promise.all([
+      axios.get('http://localhost:3000/transactions'),
+      axios.get('http://localhost:3000/categories'),
+    ]);
+    transactions.value = transRes.data;
+    categories.value = catRes.data;
   } catch (error) {
-    console.error('데이터를 불러오는데 실패했습니다:', error);
+    console.error('데이터 로드 실패:', error);
   }
 };
 
-// 컴포넌트가 마운트될 때 실행
 onMounted(() => {
-  fetchTransactions();
+  fetchData();
 });
 
-// 현재 기준 날짜 (오늘 날짜)
 const now = new Date();
 const currentYear = now.getFullYear();
 const currentMonth = now.getMonth() + 1;
 
-// 이번 달 거래내역 필터링 (연도와 월 모두 일치)
+// 이번 달 거래내역 필터링
 const currentMonthTransactions = computed(() => {
   return transactions.value.filter((t) => {
-    const transDate = new Date(t.date);
-    return (
-      transDate.getFullYear() === currentYear &&
-      transDate.getMonth() + 1 === currentMonth
-    );
+    const [y, m] = t.date.split('-').map(Number);
+    return y === currentYear && m === currentMonth;
   });
 });
 
-// 위 데이터에서 수입만 합산
+// 카테고리 ID를 통해 수입/지출 타입을 판단
+const getTransType = (categoryId) => {
+  const category = categories.value.find((c) => c.id === categoryId);
+  return category ? category.type : ''; // 'income' 또는 'expense' 반환
+};
+
+// 총 수입 계산
 const totalIncome = computed(() => {
   return currentMonthTransactions.value
-    .filter((t) => t.trans_type === 'income')
-    .reduce((acc, cur) => acc + cur.amount, 0);
+    .filter((t) => getTransType(t.category_id) === 'income')
+    .reduce((acc, cur) => acc + Number(cur.amount), 0);
 });
 
-// 위 데이터에서 지출만 합산
+// 총 지출 계산
 const totalExpense = computed(() => {
   return currentMonthTransactions.value
-    .filter((t) => t.trans_type === 'expense')
-    .reduce((acc, cur) => acc + cur.amount, 0);
+    .filter((t) => getTransType(t.category_id) === 'expense')
+    .reduce((acc, cur) => acc + Number(cur.amount), 0);
 });
 
-//순수익 계산
+// 순수익 계산
 const profit = computed(() => {
   return totalIncome.value - totalExpense.value;
 });

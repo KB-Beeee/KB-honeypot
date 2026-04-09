@@ -1,0 +1,101 @@
+.home-container {
+  display: flex;
+  gap: 40px;
+  padding: 20px 40px;
+  background-color: #fdf6ec;
+  height: calc(100vh - 100px);
+  overflow: hidden;
+}
+
+.left-section {
+  flex: 2;
+  height: 100%;
+}
+
+/* 달력과 내역을 묶음 */
+.scroll-container {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 15px;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* 스크롤바 배경(통로) 색상 */
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* 아주 연한 회색 혹은 투명하게 */
+  border-radius: 10px;
+}
+
+/* 3. 스크롤바 핸들(움직이는 막대) 색상 */
+.scroll-container::-webkit-scrollbar-thumb {
+  /* 꿀단지 테마와 어울리는 노란색 계열 예시 (#ffcd28) */
+  background-color: #f5cac3;
+  border-radius: 10px;
+}
+
+/* 4. 핸들에 마우스를 올렸을 때 색상(Hover) */
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #f28482; /* 조금 더 진한 노란색 */
+}
+
+/* 📌 달력과 최근내역 박스의 공통 스타일 (넓이 통일) */
+.content-card {
+  background-color: white;
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid #84a59d;
+  width: 100%; /* 부모 넓이에 꽉 차게 */
+  box-sizing: border-box;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 40px 0 20px 10px;
+  color: #333;
+}
+
+/* 리스트 아이템 스타일 */
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.date {
+  flex: 1;
+  color: #666;
+}
+.amount {
+  flex: 2;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.amount.expense {
+  color: #4a90e2;
+}
+.amount.income {
+  color: #ff4d4f;
+}
+.category {
+  flex: 1;
+  text-align: right;
+  color: #333;
+}
+
+/* 오른쪽 섹션 고정 */
+.right-section {
+  flex: 1;
+  height: fit-content;
+}

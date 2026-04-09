@@ -13,11 +13,12 @@
   color: black !important; /* 날짜 글자색 검정 */
   text-decoration: none !important;
   padding-right: 15px !important; /* 숫자와 오른쪽 경계선 사이의 간격 */
-  display: inline-block;          /* 여백이 정확히 적용되도록 블록 요소화 */
+  display: inline-block; /* 여백이 정확히 적용되도록 블록 요소화 */
 }
 
 /* 그리드 테두리 투명하게 혹은 제거 (필요시) */
-:deep(.fc-theme-standard td), :deep(.fc-theme-standard th) {
+:deep(.fc-theme-standard td),
+:deep(.fc-theme-standard th) {
   border: 1px solid #eee; /* 기본 테두리를 아주 연하게 하거나, 필요하면 none으로 변경 */
 }
 
@@ -31,9 +32,9 @@
 
 /* 1. 기본 상태 (가만히 있을 때): 노란색 */
 :deep(.fc-button-primary) {
-  background-color: #f6bd60 !important; 
-  border-color: #f6bd60 !important;     
-  color: white !important;              
+  background-color: #f6bd60 !important;
+  border-color: #f6bd60 !important;
+  color: white !important;
 }
 
 /* 2. 마우스를 올렸을 때 (Hover): 어두워지지 않고 노란색 유지 */
@@ -47,7 +48,7 @@
 :deep(.fc-button-primary:active),
 :deep(.fc-button-primary:not(:disabled):active) {
   background-color: #f6bd60 !important; /* 배경색 그대로 */
-  border-color: #f6bd60 !important;     /* 테두리색 그대로 */
+  border-color: #f6bd60 !important; /* 테두리색 그대로 */
   box-shadow: 0 0 0 0.2rem #84a59d !important; /* 요것만 딱 등장 */
 }
 
@@ -70,12 +71,12 @@
 
 /* 2. 입금: 빨간색 */
 :deep(.event-income .fc-event-main) {
-  color: #E53E3E !important; /* 눈에 편안한 빨간색 */
+  color: #e53e3e !important; /* 눈에 편안한 빨간색 */
 }
 
 /* 3. 출금: 파란색 */
 :deep(.event-expense .fc-event-main) {
-  color: #3182CE !important; /* 눈에 편안한 파란색 */
+  color: #3182ce !important; /* 눈에 편안한 파란색 */
 }
 
 :deep(.fc-daygrid-day-frame) {
@@ -85,6 +86,19 @@
 :deep(.fc-daygrid-day-events) {
   position: absolute !important;
   bottom: 5px !important; /* 바닥에서 5px 띄움 (수치를 조절해 높낮이 변경 가능) */
-  width: 100%;            /* 가로 꽉 차게 */
-  margin: 0 !important;   /* 기본 마진 제거 */
+  width: 100%; /* 가로 꽉 차게 */
+  margin: 0 !important; /* 기본 마진 제거 */
+}
+.calendar-container {
+  max-width: 800px; /* 👈 원하는 가로 크기로 제한 (예: 800px) */
+  margin: 0 auto; /* 👈 중앙 정렬 */
+}
+.calendar-wrapper {
+  max-width: 600px; /* 원하는 너비 */
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+/* FullCalendar 내부 폰트나 셀 크기를 조절하고 싶을 때 */
+:deep(.fc) {
+  font-size: 0.8rem; /* 전체적인 글자 크기 축소 */
 }
