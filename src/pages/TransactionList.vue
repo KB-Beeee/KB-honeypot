@@ -131,11 +131,27 @@ const filteredTransactions = computed(() => {
   });
 
   list.sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    return appliedFilter.value.sort === 'latest'
-      ? dateB - dateA
-      : dateA - dateB;
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+
+    // 1. 거래 날짜(date) 비교
+    if (dateA !== dateB) {
+      return appliedFilter.value.sort === 'latest'
+        ? dateB - dateA
+        : dateA - dateB;
+    }
+
+    // 2. 거래 날짜가 같다면 생성 시각(created_at) 비교
+    const createA = new Date(a.created_at).getTime();
+    const createB = new Date(b.created_at).getTime();
+
+    // 최신순(latest)일 때: 더 큰 값(나중 시각)인 B가 앞으로 와야 함 (B - A)
+    if (appliedFilter.value.sort === 'latest') {
+      return createB - createA;
+    } else {
+      // 과거순(oldest)일 때: 더 작은 값(이전 시각)인 A가 앞으로 와야 함 (A - B)
+      return createA - createB;
+    }
   });
 
   return list;
@@ -200,6 +216,9 @@ onMounted(() => {
   justify-content: center;
 
   line-height: 0;
+}
+.fab-btn:hover {
+  background-color: #da911d;
 }
 .plus-icon {
   font-size: 45px;
