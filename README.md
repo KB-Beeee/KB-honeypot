@@ -1,4 +1,8 @@
-# 🍯 꿀단지가계부 (Honeypot Budget)
+# 꿀단지가계부 (Honeypot Budget)
+
+<p align="center">
+  <img src="./src/assets/images/꿀단지/5단계.png" alt="꿀단지가계부 로고" width="100px" />
+</p>
 
 > 꿀단지가계부는 귀여운 꿀벌 캐릭터와 함께 자산을 관리하고 출석 챌린지를 통해 올바른 소비 습관을 기르는 서비스입니다.
 
@@ -13,17 +17,9 @@
 
 ## 🐝 Team: Beeee
 
-|  임민지  |  이은수  |  전소현  |  정유민  |
+| 임민지👑 | 이은수🍯 | 전소현🍯 | 정유민🍯 |
 | :------: | :------: | :------: | :------: |
 | Frontend | Frontend | Frontend | Frontend |
-
----
-
-## 🖼 Service Logo
-
-<p align="center">
-  <img src="./src/assets/images/꿀단지/5단계.png" alt="꿀단지가계부 로고" width="200px" />
-</p>
 
 ---
 
@@ -48,11 +44,11 @@
   - **출금**: 교통, 식비, 여가, 건강, 기타, 공과금
 - **상태 관리**: 등록/수정 모드 통합 처리 및 데이터 유효성 검사
 
-### 👤 마이페이지 & 챌린지
+### 👤 마이페이지 & 챌린지 (담당: `임민지`)
 
 - **프로필 관리**: 이름 및 이메일 수정, 회원 탈퇴 기능 제공
-  <!-- - **출석 챌린지**: 사용자 연속 출석 일수에 따른 **꿀단지 디자인 변경** -->
-  <!-- - **게이미피케이션**: 자산 상태나 출석률에 따른 **꿀벌 캐릭터 이미지 변화** -->
+- **출석 챌린지**: 사용자 연속 출석 일수에 따른 **꿀단지 디자인 변경**
+- **게이미피케이션**: 자산 상태나 출석률에 따른 **꿀벌 캐릭터 이미지 변화**
 
 ---
 
@@ -60,7 +56,7 @@
 
 - **Framework**: Vue.js (Vite)
 - **Routing**: Vue Router
-- **Database**: JSON Server (Mock API)
+- **Database**: JSON Server
 - **Styling**: CSS (Scoped)
 
 ---
@@ -71,9 +67,9 @@
 # 의존성 설치
 npm install
 
-# JSON Server 실행 (Mock DB)
-npm run db
+# JSON Server 실행
+npx json-server db.json
 
 # Frontend 실행
-npx json-server db.json
+npm run dev
 ```
