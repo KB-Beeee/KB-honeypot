@@ -158,8 +158,9 @@ export default {
           cat.name === this.selectedCategory &&
           cat.type === this.transactionType,
       );
+      const now = new Date();
+      const customId = `t${now}`;
 
-      const customId = `t${Date.now()}`;
       const payload = {
         id: String(customId),
         user_id: 'u001',
@@ -167,7 +168,8 @@ export default {
         date: this.transactionDate,
         amount: Number(this.rawAmount),
         memo: this.memo,
-        created_at: new Date().toISOString().substr(0, 10),
+        created_at: now.toISOString(), // ISO 표준
+        // created_at: now.toLocaleString(), // 예쁘게
         is_deleted: false,
       };
 
@@ -179,6 +181,7 @@ export default {
         if (res.status === 201) {
           alert('거래 내역이 저장되었습니다🍯');
           this.resetForm();
+          window.location.reload();
         }
       } catch (error) {
         console.error('저장 실패:', error);
