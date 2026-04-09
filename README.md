@@ -1,5 +1,79 @@
-# Vue 3 + Vite
+# 🍯 꿀단지가계부 (Honeypot Budget)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+> 꿀단지가계부는 귀여운 꿀벌 캐릭터와 함께 자산을 관리하고 출석 챌린지를 통해 올바른 소비 습관을 기르는 서비스입니다.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+---
+
+## 🏗 Project Status: Skeleton Coding
+
+본 프로젝트는 서비스의 핵심 비즈니스 로직과 UI 흐름을 빠르게 검증하기 위한 **스켈레톤(Skeleton) 단계**의 프로젝트입니다.
+기본적인 데이터 바인딩 및 라우팅 구조가 설계되어 있으며, 향후 실제 백엔드 연동 및 세부 기능 고도화를 목표로 합니다.
+
+---
+
+## 🐝 Team: Beeee
+
+|  임민지  |  이은수  |  전소현  |  정유민  |
+| :------: | :------: | :------: | :------: |
+| Frontend | Frontend | Frontend | Frontend |
+
+---
+
+## 🖼 Service Logo
+
+<p align="center">
+  <img src="./src/assets/images/꿀단지/5단계.png" alt="꿀단지가계부 로고" width="200px" />
+</p>
+
+---
+
+## ✨ 주요 기능 소개
+
+### 🏠 홈 화면 (담당: `임민지 & 이은수`)
+
+- **달력 UI**: 날짜별 입출금 내역 확인 및 오늘 날짜 표시
+- **지출 요약**: 이번 달 총 수입, 지출, 순이익 실시간 계산 출력
+- **최근 내역**: 최근 발생한 거래 내역 요약 조회
+
+### 📜 거래 내역 (Transaction List) (담당: `정유민`)
+
+- **스마트 필터**: 3개월/전체/최신순 등 기간 및 유형별 필터링 기능
+- **상세 보기 및 관리**: 상세 내역 확인 및 개별 내역 수정/삭제 처리
+
+### ➕ 거래 등록 (Add Transaction) (담당: `전소현`)
+
+- **모달 UI 구현**: 거래 내역 페이지에서 즉시 호출 가능한 모달 형태의 컴포넌트
+- **동적 카테고리**: '입금/출금' 유형 선택에 따른 맞춤형 카테고리 노출
+  - **입금**: 월급, 용돈, 기타
+  - **출금**: 교통, 식비, 여가, 건강, 기타, 공과금
+- **상태 관리**: 등록/수정 모드 통합 처리 및 데이터 유효성 검사
+
+### 👤 마이페이지 & 챌린지
+
+- **프로필 관리**: 이름 및 이메일 수정, 회원 탈퇴 기능 제공
+  <!-- - **출석 챌린지**: 사용자 연속 출석 일수에 따른 **꿀단지 디자인 변경** -->
+  <!-- - **게이미피케이션**: 자산 상태나 출석률에 따른 **꿀벌 캐릭터 이미지 변화** -->
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: Vue.js (Vite)
+- **Routing**: Vue Router
+- **Database**: JSON Server (Mock API)
+- **Styling**: CSS (Scoped)
+
+---
+
+## 🚀 실행 방법
+
+```bash
+# 의존성 설치
+npm install
+
+# JSON Server 실행 (Mock DB)
+npm run db
+
+# Frontend 실행
+npx json-server db.json
+```
