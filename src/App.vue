@@ -4,14 +4,13 @@
     <main class="main-content">
       <router-view />
     </main>
-    <footer class="footer">
-      <div class="footer-content">
-        <p>
-          제작 : 임민지 이은수 정유민 전소현 © 2026 Beeee Company. All Rights
-          Reserved.
-        </p>
-      </div>
-    </footer>
+<footer class="footer" v-if="$route.path !== '/mypage' && $route.path !== '/'">
+  <div class="footer-content">
+    <p>
+      제작 : 임민지 이은수 정유민 전소현 © 2026 Beeee Company. All Rights Reserved.
+    </p>
+  </div>
+</footer>
   </div>
 </template>
 

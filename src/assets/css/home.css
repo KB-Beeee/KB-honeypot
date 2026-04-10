@@ -167,3 +167,88 @@
     transform: translateX(0);
   }
 }
+
+
+/* --------------------------------------------------- */
+/* ✨ 반응형 (아이폰 프로/맥스 사이즈 430px 이하일 때) 적용 ✨ */
+/* --------------------------------------------------- */
+@media screen and (max-width: 430px) {
+  /* 1. 전체 래퍼: 양옆 배치를 세로 배치로 변경 & 스크롤 허용 */
+  .home-container {
+    flex-direction: column; 
+    height: auto; /* 고정 높이 해제하여 내용물만큼 늘어나게 */
+    min-height: calc(100vh - 140px); /* 헤더, 푸터 높이 제외 */
+    padding: 20px; /* 좌우 여백 줄임 */
+    gap: 30px; /* 각 섹션(달력, 카드, 최근내역) 사이 간격 */
+    overflow-y: visible; /* 부모 컨테이너 자체 스크롤 방지 (전체 페이지 스크롤 사용) */
+  }
+
+  /* 2. 왼쪽 영역 (달력 & 최근 내역) / 오른쪽 영역 (요약 카드) 비율 해제 */
+  .left-section,
+  .right-section {
+    flex: none; /* 플렉스 비율 해제 */
+    width: 100%; /* 가로 전체 사용 */
+  }
+
+  /* 3. 오른쪽 섹션(요약 카드)를 중간으로 끌어올리기 */
+  /* CSS Flexbox의 order 속성을 이용해 HTML 순서와 상관없이 화면 배치 순서를 바꿉니다. */
+  .left-section {
+    display: flex;
+    flex-direction: column;
+    order: 1; /* 제일 위쪽 배치 (달력 컨테이너) */
+  }
+
+  .right-section {
+    order: 2; /* 두 번째 배치 (요약 카드) */
+    margin-bottom: 20px;
+  }
+
+  /* 4. 스크롤 컨테이너 제어 */
+  .scroll-container {
+    height: auto; /* 고정 높이 해제 */
+    overflow-y: visible; /* 내부 스크롤 없애고 전체 화면 스크롤 사용 */
+    padding-right: 0; /* 스크롤바 영역으로 남겨둔 여백 제거 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 최근 내역 제목과 카드를 요약 카드 아래로 보내기 */
+  .title {
+    order: 3; /* 세 번째 배치 (최근 내역 제목) */
+    margin: 10px 0 15px 5px;
+    font-size: 1.4rem;
+  }
+
+  .transaction-list-card {
+    order: 4; /* 네 번째 배치 (최근 내역 리스트) */
+    margin-bottom: 0;
+  }
+
+  /* 5. 달력 내부의 '상세 내역' 패널 모바일 레이아웃 (세로 분할) */
+  .split-layout {
+    flex-direction: column; /* 달력과 상세 내역을 양옆이 아닌 위아래로 분리 */
+    gap: 20px;
+  }
+
+  .day-detail-panel {
+    border-left: none; /* 세로선 제거 */
+    border-top: 2px solid #f0f0f0; /* 가로선 추가 */
+    padding-left: 0;
+    padding-top: 20px;
+  }
+
+  /* 6. 카드 내부 여백 및 글씨 크기 다듬기 */
+  .content-card {
+    padding: 20px; /* 좁은 화면에 맞춰 여백 축소 */
+    border-radius: 16px;
+  }
+
+  .transaction-item {
+    padding: 15px 0;
+    font-size: 0.95rem; /* 글씨 아주 살짝 작게 */
+  }
+
+  .amount {
+    font-size: 1rem; /* 금액 폰트 크기 조정 */
+  }
+}

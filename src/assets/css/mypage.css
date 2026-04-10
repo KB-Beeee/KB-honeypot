@@ -242,3 +242,80 @@
   width: 130px; /* 너무 부담스럽지 않게 적당히 귀여운 크기로 */
   margin-bottom: 20px;
 }
+
+/* --------------------------------------------------- */
+/* ✨ 반응형 (아이폰 프로/맥스 사이즈 430px 이하일 때) 적용 ✨ */
+/* --------------------------------------------------- */
+@media screen and (max-width: 430px) {
+.mypage-wrapper {
+    height: auto;
+    /* 👇 1. 위쪽 간격을 20px -> 50px로 넉넉하게 늘리고, 
+            아래쪽 간격은 100px -> 80px로 살짝 줄였습니다. */
+    padding: 50px 0 80px 0; 
+    align-items: flex-start;
+  }
+
+  .mypage-content {
+    flex-direction: column; 
+    width: 90%; 
+    /* 👇 2. 프로필 카드와 꿀단지 사이의 간격도 너무 넓지 않게 40px -> 20px로 확 줄였어요! */
+    gap: 40px; 
+    margin-top: 0;
+  }
+
+  /* 3. 프로필 카드: 꿀벌과 정보를 위아래로 배치 */
+  .profile-card {
+    flex-direction: column; 
+    padding: 50px 20px 30px 20px; /* 좌우 여백을 줄여서 화면에 쏙 들어가게 */
+    gap: 20px; /* 꿀벌과 정보 폼 사이 간격 */
+    width: 100%;
+    box-sizing: border-box;
+    min-height: auto; /* 내용물만큼만 높이 차지 */
+  }
+
+  /* 4. 수정 버튼: 위치와 크기 조절 */
+  .editBtn {
+    top: 15px;
+    right: 15px;
+    padding: 6px 16px;
+    font-size: 14px;
+  }
+
+ /* 5. 꿀벌 이미지 모바일에 맞게 축소 (기존 코드) */
+  :deep(.card-img-left) {
+    width: 100px; 
+  }
+
+  /* 👇 여기에 꿀단지 이미지 크기를 줄이는 코드를 딱 한 줄 추가합니다! */
+  :deep(.honey-pot-area img) {
+    width: 120px; /* 기존 크기에서 앙증맞은 크기로 줄임 (예: 120px, 100px) */
+    height: auto;
+  }
+
+
+
+  /* 6. 정보 입력 폼 안쪽 여백/글씨 축소 */
+  .card-body {
+    gap: 20px; 
+  }
+
+  .info-row {
+    font-size: 16px; 
+    padding-bottom: 8px;
+  }
+
+  .info-row .label {
+    width: 60px; /* 라벨 영역을 살짝 줄여서 텍스트 들어갈 공간 확보 */
+  }
+
+  /* 7. 모달창 반응형: 모바일 화면을 넘어가지 않게 방어 */
+  .modal-box {
+    padding: 30px 20px;
+    width: 85%;
+    box-sizing: border-box;
+  }
+
+  .modal-crying-bee {
+    width: 100px; /* 우는 꿀벌 크기도 앙증맞게 축소 */
+  }
+}
