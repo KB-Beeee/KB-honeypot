@@ -45,8 +45,8 @@
     <div class="list-container p-4 rounded-4 shadow-sm border mt-4">
       <h5 class="fw-bold mb-4">내 꿀단지 상황</h5>
       <div
-        v-for="item in filteredTransactions"
-        :key="item.trans_id"
+        v-for="item in paginatedTransactions"
+        :key="item.id"
         class="row align-items-center py-3 border-bottom g-0 px-2"
       >
         <div class="col-1 text-muted">{{ item.date }}</div>
@@ -71,6 +71,40 @@
           </button>
         </div>
       </div>
+      <nav class="mt-4 d-flex justify-content-center" v-if="totalPages > 0">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" :class="{ disabled: startPage === 1 }">
+            <button
+              class="page-link shadow-none"
+              @click="goToPrevGroup"
+              :disabled="startPage === 1"
+            >
+              &lt;
+            </button>
+          </li>
+
+          <li
+            v-for="page in visiblePages"
+            :key="page"
+            class="page-item"
+            :class="{ active: currentPage === page }"
+          >
+            <button class="page-link shadow-none" @click="currentPage = page">
+              {{ page }}
+            </button>
+          </li>
+
+          <li class="page-item" :class="{ disabled: endPage === totalPages }">
+            <button
+              class="page-link shadow-none"
+              @click="goToNextGroup"
+              :disabled="endPage === totalPages"
+            >
+              &gt;
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -93,7 +127,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useTransactionStore } from '@/stores/transactionStore.js';
 import AddTransaction from '@/components/AddTransaction.vue';
 import TransactionDetail from '@/components/TransactionDetail.vue';
@@ -163,6 +197,52 @@ const filteredTransactions = computed(() => {
 
   return list;
 });
+
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const pageGroupSize = 5;
+
+const paginatedTransactions = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  return filteredTransactions.value.slice(startIndex, endIndex);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredTransactions.value.length / itemsPerPage);
+});
+
+const startPage = computed(() => {
+  return (
+    Math.floor((currentPage.value - 1) / pageGroupSize) * pageGroupSize + 1
+  );
+});
+
+const endPage = computed(() => {
+  const last = startPage.value + pageGroupSize - 1;
+  return Math.min(last, totalPages.value);
+});
+
+const visiblePages = computed(() => {
+  const pages = [];
+  for (let i = startPage.value; i <= endPage.value; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+const goToPrevGroup = () => {
+  if (startPage.value > 1) {
+    currentPage.value = startPage.value - 1;
+  }
+};
+
+const goToNextGroup = () => {
+  if (endPage.value < totalPages.value) {
+    currentPage.value = endPage.value + 1;
+  }
+};
 
 const isDetailOpen = ref(false);
 const selectedItem = ref(null);
@@ -267,5 +347,23 @@ const closeAddModal = () => {
   font-size: 45px;
   font-weight: 300;
   margin-top: 6px;
+}
+
+.pagination {
+  gap: 5px;
+}
+.page-link {
+  border: none;
+  color: #666;
+  border-radius: 8px !important;
+  margin: 0 2px;
+}
+.page-item.active .page-link {
+  background-color: #f6bd60;
+  color: white;
+}
+.page-link:hover:not(.active) {
+  background-color: #fdf2e2;
+  color: #f6bd60;
 }
 </style>
