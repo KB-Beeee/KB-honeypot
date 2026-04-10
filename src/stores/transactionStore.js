@@ -29,7 +29,7 @@ export const useTransactionStore = defineStore('transaction', () => {
 
   const deleteTransaction = async (id) => {
     try {
-      await axios.delete(`${BASEURI}/${id}`, { is_delete: true });
+      await axios.patch(`${BASEURI}/${id}`, { is_deleted: true });
       await fetchTransactions();
     } catch (error) {
       console.error('거래 삭제 실패:', error);

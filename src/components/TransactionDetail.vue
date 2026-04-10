@@ -36,7 +36,7 @@
       </div>
       <hr class="divider" />
       <div class="modal-footer d-flex justify-content-center gap-3 mt-4">
-        <button class="btn-action flex-grow-1">수정</button>
+        <button class="btn-action flex-grow-1" @click="handleEdit">수정</button>
         <button class="btn-action flex-grow-1" @click="handleDelete">
           삭제
         </button>
@@ -55,7 +55,7 @@ const props = defineProps({
   transaction: Object,
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'openEdit']);
 
 const handleDelete = async () => {
   if (confirm('이 내역을 정말 삭제하시겠습니까?')) {
@@ -68,7 +68,11 @@ const handleDelete = async () => {
     }
   }
 };
-
+const handleEdit = () => {
+  // 수정 요청
+  emit('openEdit', props.transaction);
+  emit('close'); // 상세창 닫기
+};
 const getCategory = (categoryId) => {
   return store.categories.find((c) => c.id === categoryId) || {};
 };
