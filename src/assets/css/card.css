@@ -105,3 +105,65 @@
   margin-top: 20px;
   width: 100%;
 }
+
+/* --------------------------------------------------- */
+/* ✨ 반응형 (아이폰 프로/맥스 사이즈 430px 이하일 때) 적용 ✨ */
+/* --------------------------------------------------- */
+@media screen and (max-width: 430px) {
+  /* 1. 요약 카드 가로 스크롤 설정 */
+  .card-container {
+    display: flex;
+    flex-wrap: nowrap; /* 카드가 다음 줄로 넘어가지 않게 방어 */
+    overflow-x: auto; /* 가로 스크롤 허용 */
+    gap: 15px;
+    padding-bottom: 15px; /* 스크롤바와 카드 사이의 여백 */
+    
+    /* 스크롤바 숨기기 (모바일에서는 스와이프가 자연스러움) */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .card-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* 2. 카드 크기 모바일에 맞게 축소 */
+  .status-card {
+    /* 카드가 부모 컨테이너 크기에 맞춰 찌그러지지 않도록 고정 */
+    flex: 0 0 auto; 
+    width: 150px; /* 기존 220px에서 150px로 축소 */
+    height: 240px; /* 기존 340px에서 240px로 축소 */
+    padding: 20px 10px;
+    border-radius: 20px;
+  }
+
+  /* 3. 카드 안의 동그라미(타이틀) 크기 축소 */
+  .card-title {
+    width: 80px;
+    height: 80px;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+  }
+
+  /* 4. 카드 안의 금액 글자 크기 축소 */
+  .card-amount {
+    font-size: 1.15rem; /* 기존 1.55rem에서 축소 */
+    word-break: break-all; /* 금액이 길어지면 줄바꿈 되도록 설정 */
+    text-align: center;
+  }
+
+  /* 5. 카드 안의 일러스트 크기 축소 */
+  .card-illustration {
+    width: 50px;
+  }
+
+  /* 6. 꿀단지(Attendance_Honeypot)와의 공백 확보 */
+  .attendance-section {
+    margin-top: 40px; /* 공백 넉넉하게 추가 */
+  }
+
+  /* 7. 상단 "O월 꿀단지 상태" 텍스트 크기 조절 */
+  .monthly-text {
+    font-size: 1.4rem;
+  }
+}
