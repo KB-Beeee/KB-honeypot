@@ -96,7 +96,7 @@ const fetchData = async () => {
       axios.get('http://localhost:3000/transactions'),
       axios.get('http://localhost:3000/categories'),
     ]);
-    transactions.value = transRes.data;
+    transactions.value = transRes.data.filter((t) => t.is_deleted === false);
     categories.value = catRes.data;
   } catch (error) {
     console.error('데이터 로드 실패:', error);
