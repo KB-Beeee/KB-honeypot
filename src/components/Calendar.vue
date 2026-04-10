@@ -59,7 +59,9 @@ const fetchTransactions = async () => {
     ]);
 
     if (transResponse.status === 200 && catResponse.status === 200) {
-      states.transactions = transResponse.data;
+      states.transactions = transResponse.data.filter(
+        (t) => t.is_deleted === false,
+      );
       states.categories = catResponse.data;
 
       updateCalendarEvents();
@@ -82,6 +84,7 @@ const updateCalendarEvents = () => {
   }
 
   states.transactions.forEach((trans) => {
+    if (trans.is_deleted) return;
     const currentType = categoryTypeMap[trans.category_id];
 
     // 데이터에 없는 카테고리일 경우를 대비한 방어 코드
