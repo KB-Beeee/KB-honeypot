@@ -6,8 +6,9 @@
         <button class="editBtn" @click="toggleEditMode">
           {{ isEditMode ? '완료' : '수정' }}
         </button>
-        
-        <img class="card-img-left" src="../assets/images/꿀벌/피식꿀벌.png" alt="bee">
+
+        <Bee customClass="card-img-left" />
+        <!-- <img class="card-img-left" src="../assets/images/꿀벌/피식꿀벌.png" alt="bee"> -->
         
         <div class="card-body">
           <div class="info-row">
@@ -30,10 +31,11 @@
         </div>
       </div>
 
-      <div class="honey-pot-area">
+      <!-- <div class="honey-pot-area">
         <p class="challenge-title">출석 챌린지</p>
         <p class="challenge-days">3일째 기록 중</p>
-      </div>
+      </div> -->
+      <Attendance_Honeypot />
 
     </div>
   </div>
@@ -62,6 +64,8 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import Bee from '../components/bee.vue';
+import Attendance_Honeypot from '../components/Attendance_Honeypot.vue';
 
 const router = useRouter(); 
 
