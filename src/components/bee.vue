@@ -22,43 +22,80 @@ const props = defineProps({
   },
 });
 
+const transactions = ref([]);
 const attCnt = ref(0);
 const loading = ref(true);
 
-// 0일이거나 2일 이상일 때 랜덤 이미지를 고르기
-const getRandomImage = (imgArray) => {
-  const randomIndex = Math.floor(Math.random() * imgArray.length);
-  return imgArray[randomIndex];
+// 연속 출석 계산 로직
+const calculateAttendance = () => {
+  if (transactions.value.length === 0) {
+    attCnt.value = 0;
+    return;
+  }
+
+  const recordedDates = new Set(
+    transactions.value.map((item) => item.created_at.split('T')[0]),
+  );
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const isTodayRecorded = recordedDates.has(todayStr);
+
+  let count = 0;
+  let checkDate = new Date();
+
+  // 오늘 기록이 없으면 어제부터 역산, 있으면 오늘부터 역산
+  if (!isTodayRecorded) {
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+
+  while (true) {
+    const formattedCheckDate = checkDate.toISOString().split('T')[0];
+    if (recordedDates.has(formattedCheckDate)) {
+      count++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  attCnt.value = count;
 };
 
 // 출석 횟수에 따른 이미지 계산
 const beeImage = computed(() => {
-  if (loading.value) return basicBee; // 로딩 중 기본값
+  if (loading.value) return basicBee;
 
   if (attCnt.value === 0) {
     return getRandomImage([tiredBee, sadBee, cryingBee]);
   } else if (attCnt.value === 1) {
     return basicBee;
   } else {
-    // 2일 이상
+    // 2일 이상일 때
     return getRandomImage([happyBee, smirkingBee]);
   }
 });
 
-const fetchUserAttendance = async () => {
+const getRandomImage = (imgArray) => {
+  const randomIndex = Math.floor(Math.random() * imgArray.length);
+  return imgArray[randomIndex];
+};
+
+const fetchData = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('http://localhost:3000/users/u001');
-    attCnt.value = response.data.att_cnt;
+    // 출석 기록이 담긴 transactions API 호출
+    const res = await axios.get('http://localhost:3000/transactions');
+    transactions.value = res.data;
+    calculateAttendance();
   } catch (error) {
-    console.error('사용자 데이터 로드 실패:', error);
+    console.error('데이터 로드 실패:', error);
   } finally {
     loading.value = false;
   }
 };
 
 onMounted(() => {
-  fetchUserAttendance();
+  fetchData();
 });
 </script>
 
