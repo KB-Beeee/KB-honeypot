@@ -1,14 +1,8 @@
 <template>
   <nav class="navbar shadow-sm" v-if="$route.path !== '/'">
     <div class="container-fluid d-flex align-items-center">
-      
       <router-link to="/home" class="navbar-brand d-flex align-items-center">
-        <img
-          src="@/assets/images/꿀벌/기본꿀벌.png"
-          alt="Honeypot Logo"
-          width="40"
-          class="me-2"
-        />
+        <Bee customClass="nav-bee-logo" />
       </router-link>
 
       <div class="nav-links d-flex">
@@ -19,6 +13,10 @@
     </div>
   </nav>
 </template>
+
+<script setup>
+import Bee from '../components/bee.vue';
+</script>
 
 <style scoped>
 @import '../assets/css/bar.css';
