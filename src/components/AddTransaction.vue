@@ -87,6 +87,8 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 export default {
   props: {
@@ -209,14 +211,19 @@ export default {
         }
 
         if (res.status === 200 || res.status === 201) {
-          alert(
-            this.editData
+          // 기본 alert 대신 사용
+          await Swal.fire({
+            title: '완료!',
+            text: this.editData
               ? '수정 완료되었습니다🍯'
               : '거래 내역이 저장되었습니다🍯',
-          );
+            icon: 'success',
+            confirmButtonColor: '#f5cac3', // 가계부 테마색에 맞춰보세요
+            confirmButtonText: '확인',
+          });
           this.$emit('refresh');
           this.$emit('close');
-          window.location.reload();
+          // window.location.reload();
         }
       } catch (error) {
         console.error('작업 실패:', error);

@@ -1,6 +1,6 @@
 <template>
   <div class="container py-4">
-    <div class="d-flex align-items-center gap-3">
+    <div class="filter-wrapper d-flex align-items-center gap-3">
       <div
         class="filter-bar d-flex justify-content-end flex-grow-1 p-3 border rounded-pill gap-3"
       >
@@ -47,11 +47,13 @@
       <div
         v-for="item in paginatedTransactions"
         :key="item.id"
-        class="row align-items-center py-3 border-bottom g-0 px-2"
+        class="transaction-item row align-items-center py-3 border-bottom g-0 px-2"
       >
-        <div class="col-1 text-muted">{{ item.date }}</div>
+        <div class="col-date col-1 text-muted">
+          {{ item.date.substring(5).replace('-', '.') }}
+        </div>
         <div
-          class="col-2 fw-bold text-end"
+          class="col-amount col-2 fw-bold text-end"
           :class="
             getCategory(item.category_id).type === 'expense'
               ? 'text-primary'
@@ -61,10 +63,10 @@
           {{ getCategory(item.category_id).type === 'expense' ? '-' : '+'
           }}{{ item.amount.toLocaleString() }}
         </div>
-        <div class="col ms-4 text-secondary">
+        <div class="col-category col ms-4 text-secondary">
           {{ getCategory(item.category_id).name }}
         </div>
-        <div class="col-auto">
+        <div class="col-btn col-auto">
           <button
             @click="openDetail(item)"
             class="btn btn-outline-secondary btn-sm rounded-pill px-3"
@@ -367,5 +369,90 @@ const closeAddModal = () => {
 .page-link:hover:not(.active) {
   background-color: #fdf2e2;
   color: #f6bd60;
+}
+@media (max-width: 768px) {
+  /* 1. 화면 전체 여백 */
+  .container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* 2. 필터바 + 적용버튼 한 줄 정렬 */
+  .filter-wrapper {
+    flex-direction: row !important;
+    gap: 5px !important;
+    width: 100% !important;
+  }
+  .filter-bar {
+    flex: 1 !important; /* 남는 공간 다 쓰기 */
+    min-width: 0 !important;
+    padding: 0 5px !important;
+    min-height: 45px !important;
+    border-radius: 10px !important;
+  }
+  .filter-item {
+    font-size: 10.5px !important; /* 글자 크기 최적화 */
+    padding: 0 !important;
+    flex: 1;
+  }
+  .apply-btn {
+    width: 48px !important; /* 버튼 크기 고정 */
+    min-height: 45px !important;
+    font-size: 12px !important;
+    flex-shrink: 0;
+  }
+
+  /* 3. 거래 내역 리스트 (카드 스타일) */
+  .list-container {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  .transaction-item {
+    display: flex !important;
+    flex-wrap: nowrap !important; /* 절대 줄바꿈 금지 */
+    align-items: center !important;
+    background: white !important;
+    border-radius: 15px !important;
+    margin-bottom: 10px !important;
+    padding: 15px 10px !important;
+    border: 1px solid #f1f3f5 !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  }
+
+  /* 4. 내역 내부 칸 너비 (황금 비율) */
+  .col-date {
+    width: 15% !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+  .col-amount {
+    width: 32% !important;
+    font-size: 15px !important;
+    text-align: right !important;
+    padding-right: 8px !important;
+  }
+  .col-category {
+    width: 23% !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    color: #666 !important;
+  }
+  .col-btn {
+    width: 30% !important;
+    text-align: right !important;
+  }
+  .col-btn .btn {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  .reset-btn {
+    font-size: 10px !important;
+    min-width: 35px;
+  }
+  .vr {
+    display: none;
+  }
 }
 </style>
