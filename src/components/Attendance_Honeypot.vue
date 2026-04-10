@@ -19,12 +19,15 @@
     </div>
 
     <div class="pot-image-wrapper">
-      <img
-        :src="currentPotImage"
-        :alt="`${attendanceCount}단계 꿀단지`"
-        class="honey-pot-img"
-        :class="{ 'not-recorded': !isTodayRecorded }"
-      />
+      <div class="pot-container">
+        <img
+          :src="currentPotImage"
+          :alt="`${attendanceCount}단계 꿀단지`"
+          class="honey-pot-img"
+          :class="{ 'not-recorded': !isTodayRecorded }"
+        />
+        <div class="attendance-percentage">{{ attendancePercentage }}%</div>
+      </div>
     </div>
   </div>
 </template>
@@ -34,8 +37,14 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
 const transactions = ref([]);
-const attendanceCount = ref(0); // 실제 연속 일수 (제한 없음)
+const attendanceCount = ref(0);
 const isTodayRecorded = ref(false);
+
+// 7일을 100% 기준으로 퍼센트 계산
+const attendancePercentage = computed(() => {
+  const percent = Math.floor((attendanceCount.value / 7) * 100);
+  return percent > 100 ? 100 : percent;
+});
 
 const potImages = [
   new URL('@/assets/images/꿀단지/0단계.png', import.meta.url).href,
@@ -48,9 +57,18 @@ const potImages = [
 ];
 
 const currentPotImage = computed(() => {
-  // 숫자는 100일, 1000일 계속 올라가도
-  // 이미지는 인덱스 6(6단계.png)까지만 참조하도록 제한
-  const index = Math.min(attendanceCount.value, 6);
+  const count = attendanceCount.value;
+  let index = 0;
+
+  if (count === 0) index = 0;
+  else if (count === 1) index = 1;
+  else if (count === 2) index = 2;
+  else if (count === 3) index = 3;
+  else if (count === 4) index = 3;
+  else if (count === 5) index = 4;
+  else if (count === 6) index = 5;
+  else index = 6;
+
   return potImages[index];
 });
 
@@ -78,7 +96,6 @@ const calculateAttendance = () => {
       break;
     }
   }
-  // 여기서 count는 제한 없이 계속 쌓입니다.
   attendanceCount.value = count;
 };
 
@@ -98,6 +115,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 기존 스타일 유지 */
 .highlight {
   color: #f6bd60;
   font-size: 3rem;
@@ -105,7 +123,6 @@ onMounted(() => {
   -webkit-text-stroke: 0.1px #ffd289;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 .attendance-card {
   text-align: center;
   padding: 10px;
@@ -121,19 +138,49 @@ onMounted(() => {
   color: #888;
   margin-top: 5px;
 }
+
+/* 퍼센트 표시를 위한 스타일 추가 */
 .pot-image-wrapper {
   margin-top: 5px;
   display: flex;
   justify-content: center;
 }
 
+.pot-container {
+  position: relative;
+  display: inline-block;
+}
+
+.attendance-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #f6bd60;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* 이미지 호버 방해 금지 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid #f6bd60;
+}
+
+/* 호버 시 퍼센트 표시 */
+.pot-container:hover .attendance-percentage {
+  opacity: 1;
+}
+
 .honey-pot-img {
   width: 200px;
   height: auto;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
 }
 
-/* 오늘 기록하지 않았을 때 이미지를 살짝 투명하게 처리하여 동기부여 제공 */
 .honey-pot-img.not-recorded {
   filter: grayscale(0.3) opacity(0.7);
   transform: scale(0.95);
@@ -141,5 +188,6 @@ onMounted(() => {
 
 .honey-pot-img:hover {
   transform: scale(1.05) rotate(-3deg);
+  filter: brightness(1.1);
 }
 </style>
