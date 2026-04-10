@@ -61,7 +61,9 @@
           {{ getCategory(item.category_id).type === 'expense' ? '-' : '+'
           }}{{ item.amount.toLocaleString() }}
         </div>
-        <div class="col ms-4 text-secondary">{{ item.memo }}</div>
+        <div class="col ms-4 text-secondary">
+          {{ getCategory(item.category_id).name }}
+        </div>
         <div class="col-auto">
           <button
             @click="openDetail(item)"
