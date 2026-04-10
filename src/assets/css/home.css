@@ -23,32 +23,27 @@
   width: 8px;
 }
 
-/* 스크롤바 배경(통로) 색상 */
 .scroll-container::-webkit-scrollbar-track {
-  background-color: #f1f1f1; /* 아주 연한 회색 혹은 투명하게 */
+  background-color: #f1f1f1;
   border-radius: 10px;
 }
 
-/* 3. 스크롤바 핸들(움직이는 막대) 색상 */
 .scroll-container::-webkit-scrollbar-thumb {
-  /* 꿀단지 테마와 어울리는 노란색 계열 예시 (#ffcd28) */
   background-color: #f5cac3;
   border-radius: 10px;
 }
 
-/* 4. 핸들에 마우스를 올렸을 때 색상(Hover) */
 .scroll-container::-webkit-scrollbar-thumb:hover {
-  background-color: #f28482; /* 조금 더 진한 노란색 */
+  background-color: #f28482;
 }
 
-/* 📌 달력과 최근내역 박스의 공통 스타일 (넓이 통일) */
 .content-card {
   background-color: white;
   border-radius: 24px;
   padding: 30px;
   box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
   border: 1.5px solid #84a59d;
-  width: 100%; /* 부모 넓이에 꽉 차게 */
+  width: 100%;
   box-sizing: border-box;
   margin-bottom: 30px;
 }
@@ -60,7 +55,6 @@
   color: #333;
 }
 
-/* 리스트 아이템 스타일 */
 .transaction-item {
   display: flex;
   justify-content: space-between;
@@ -94,8 +88,82 @@
   color: #333;
 }
 
-/* 오른쪽 섹션 고정 */
 .right-section {
   flex: 1;
   height: fit-content;
+}
+
+.split-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: stretch;
+}
+
+.calendar-container {
+  flex: 1.2;
+  min-width: 0;
+}
+
+.day-detail-panel {
+  flex: 0.8;
+  border-left: 2px solid #f0f0f0;
+  padding-left: 25px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid #84a59d;
+}
+
+.detail-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #84a59d;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.detail-cat {
+  font-weight: 500;
+  color: #555;
+}
+.detail-amt {
+  font-weight: bold;
+}
+.detail-amt.income {
+  color: #ff4d4f;
+}
+.detail-amt.expense {
+  color: #4a90e2;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

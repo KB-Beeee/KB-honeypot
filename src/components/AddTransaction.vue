@@ -77,7 +77,9 @@
       ></textarea>
 
       <div class="footer-action">
-        <button type="submit" class="save-submit-btn">저 장</button>
+        <button type="submit" class="save-submit-btn">
+          {{ editData ? '완 료' : '저 장' }}
+        </button>
       </div>
     </form>
   </div>
@@ -87,13 +89,20 @@
 import axios from 'axios';
 
 export default {
+  props: {
+    editData: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
-      transactionDate: new Date().toISOString().substr(0, 10),
-      rawAmount: 0,
+      transactionDate:
+        this.editData?.date || new Date().toISOString().substr(0, 10),
+      rawAmount: this.editData?.amount || 0,
       transactionType: '',
       selectedCategory: '',
-      memo: '',
+      memo: this.editData?.memo || '',
       categoryGroups: {
         income: [],
         expense: [],
@@ -115,8 +124,18 @@ export default {
       return this.categoryGroups[this.transactionType].map((cat) => cat.name);
     },
   },
-  created() {
-    this.fetchCategories();
+  async created() {
+    await this.fetchCategories();
+    // 수정 모드일때
+    if (this.editData) {
+      const category = this.rawCategories.find(
+        (c) => c.id === this.editData.category_id,
+      );
+      if (category) {
+        this.transactionType = category.type;
+        this.selectedCategory = category.name;
+      }
+    }
   },
   methods: {
     async fetchCategories() {
@@ -158,34 +177,50 @@ export default {
           cat.name === this.selectedCategory &&
           cat.type === this.transactionType,
       );
-      const now = new Date();
-      const customId = `t${now}`;
 
+      const now = new Date();
+
+      // 공통
       const payload = {
-        id: String(customId),
         user_id: 'u001',
         category_id: foundCategory ? foundCategory.id : 'unknown',
         date: this.transactionDate,
         amount: Number(this.rawAmount),
         memo: this.memo,
-        created_at: now.toISOString(), // ISO 표준
-        // created_at: now.toLocaleString(), // 예쁘게
         is_deleted: false,
       };
 
       try {
-        const res = await axios.post(
-          'http://localhost:3000/transactions',
-          payload,
-        );
-        if (res.status === 201) {
-          alert('거래 내역이 저장되었습니다🍯');
-          this.resetForm();
+        let res;
+        if (this.editData) {
+          // 수정 모드
+          res = await axios.patch(
+            `http://localhost:3000/transactions/${this.editData.id}`,
+            payload,
+          );
+        } else {
+          // 등록 모드
+          const customId = `t${now.getTime()}`;
+          res = await axios.post('http://localhost:3000/transactions', {
+            ...payload,
+            id: String(customId),
+            created_at: now.toISOString(),
+          });
+        }
+
+        if (res.status === 200 || res.status === 201) {
+          alert(
+            this.editData
+              ? '수정 완료되었습니다🍯'
+              : '거래 내역이 저장되었습니다🍯',
+          );
+          this.$emit('refresh');
+          this.$emit('close');
           window.location.reload();
         }
       } catch (error) {
-        console.error('저장 실패:', error);
-        alert('저장에 실패했습니다..🍯');
+        console.error('작업 실패:', error);
+        alert('작업에 실패했습니다..🍯');
       }
     },
     resetForm() {

@@ -23,11 +23,27 @@ export const useTransactionStore = defineStore('transaction', () => {
       const response = await axios.get('http://localhost:3000/categories');
       state.categories = response.data;
     } catch (error) {
-      console.error("카테고리 로드 실패:", error);
+      console.error('카테고리 로드 실패:', error);
+    }
+  };
+
+  const deleteTransaction = async (id) => {
+    try {
+      await axios.patch(`${BASEURI}/${id}`, { is_deleted: true });
+      await fetchTransactions();
+    } catch (error) {
+      console.error('거래 삭제 실패:', error);
+      throw error;
     }
   };
 
   const transactions = computed(() => state.transactions);
   const categories = computed(() => state.categories);
-  return { transactions, categories, fetchTransactions, fetchCategories };
+  return {
+    transactions,
+    categories,
+    fetchTransactions,
+    fetchCategories,
+    deleteTransaction,
+  };
 });

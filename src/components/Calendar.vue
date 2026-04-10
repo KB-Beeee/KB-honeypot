@@ -5,12 +5,13 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, defineEmits } from 'vue';
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import axios from 'axios';
 
+const emit = defineEmits(['date-selected']);
 const calendarOptions = reactive({
   plugins: [dayGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
@@ -31,6 +32,11 @@ const calendarOptions = reactive({
   fixedWeekCount: false,
   eventOrder: 'sortOrder',
   events: [],
+
+  // 날짜 클릭 시 실행
+  dateClick: function (info) {
+    emit('date-selected', info.dateStr);
+  },
 });
 
 // 서버에서 가져온 거래 내역들이 들어갈 변수

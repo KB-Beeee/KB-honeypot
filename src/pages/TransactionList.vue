@@ -78,20 +78,17 @@
     :isOpen="isDetailOpen"
     :transaction="selectedItem"
     @close="closeDetail"
+    @openEdit="openEditModal"
   ></TransactionDetail>
 
   <div class="container py-4">
-    <button class="fab-btn shadow-sm" @click="isModalOpen = true">
+    <button class="fab-btn shadow-sm" @click="openAddModal">
       <span class="plus-icon">+</span>
     </button>
   </div>
 
-  <div
-    class="modal-overlay"
-    v-if="isModalOpen"
-    @click.self="isModalOpen = false"
-  >
-    <AddTransaction @close="isModalOpen = false" />
+  <div class="modal-overlay" v-if="isAddModalOpen" @click.self="closeAddModal">
+    <AddTransaction :editData="editingItem" @close="closeAddModal" />
   </div>
 </template>
 
@@ -100,8 +97,6 @@ import { onMounted, ref, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transactionStore.js';
 import AddTransaction from '@/components/AddTransaction.vue';
 import TransactionDetail from '@/components/TransactionDetail.vue';
-
-const isModalOpen = ref(false);
 
 const store = useTransactionStore();
 
@@ -127,7 +122,9 @@ const getCategory = (categoryId) => {
 };
 
 const filteredTransactions = computed(() => {
-  let list = [...store.transactions];
+  if (!store.transactions) return [];
+
+  let list = store.transactions.filter((item) => !item.is_deleted);
 
   if (appliedFilter.value.type !== 'all') {
     list = list.filter((item) => {
@@ -184,6 +181,29 @@ onMounted(() => {
   store.fetchCategories();
   store.fetchTransactions();
 });
+
+// -------수정 및 등록 코드-------
+const isAddModalOpen = ref(false);
+const editingItem = ref(null);
+
+// 신규 등록
+const openAddModal = () => {
+  editingItem.value = null; // 수정 데이터 비우기
+  isAddModalOpen.value = true;
+};
+
+// 수정
+const openEditModal = (item) => {
+  isDetailOpen.value = false;
+  editingItem.value = item;
+  isAddModalOpen.value = true;
+};
+
+// 등록, 수정 모달 닫기
+const closeAddModal = () => {
+  isAddModalOpen.value = false;
+  editingItem.value = null;
+};
 </script>
 
 <style scoped>
