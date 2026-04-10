@@ -251,3 +251,87 @@
 .save-submit-btn:active {
   transform: scale(0.96);
 }
+
+.swal2-container {
+  z-index: 10000 !important;
+}
+
+/* 아이폰 프로 맥스 및 모바일 대응 (최대 430px) */
+@media (max-width: 430px) {
+  /* 1. 컨테이너: 가로폭 1000px 해제 및 모바일 최적화 */
+  .transaction-container {
+    width: 100% !important;
+    max-width: 100vw;
+    padding: 20px !important;
+    border-radius: 0; /* 모바일은 꽉 차는 게 앱 같아 보일 수 있어요 (취향껏 조절) */
+    box-shadow: none;
+    min-height: 100vh;
+  }
+
+  /* 2. 레이아웃: 좌측 패널과 카테고리 패널을 위아래로 */
+  .main-content {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .left-panel,
+  .category-panel {
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  /* 3. 🍯 카테고리 리스트 (두 번째 사진 스타일) */
+  .category-panel {
+    height: 200px !important; /* 고정 높이 */
+    background-color: #fff !important;
+    border: 1px solid #e8decb !important;
+    border-radius: 20px !important;
+  }
+
+  .category-list {
+    display: flex !important;
+    flex-direction: column !important; /* 세로로 쌓기 */
+  }
+
+  .category-item {
+    padding: 15px 0 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 0 !important; /* 가로 자간 해제 */
+    text-indent: 0 !important;
+    border-bottom: 1.5px solid #fff3e6 !important;
+    background-color: transparent !important;
+  }
+
+  .category-item:last-child {
+    border-bottom: none !important;
+  }
+
+  /* 선택된 상태: 텍스트 색상만 강조 (두 번째 사진 느낌) */
+  .category-item.selected {
+    background-color: #fffaf4 !important;
+    color: #ffb3a7 !important;
+    font-weight: 800 !important;
+  }
+
+  /* 4. 입력창 및 버튼 크기 조절 */
+  .amount-input {
+    font-size: 2.2rem !important; /* 너무 커서 안 잘리게 조정 */
+  }
+
+  .type-btn {
+    padding: 12px 0 !important;
+    font-size: 1.1rem !important;
+  }
+
+  .save-submit-btn {
+    width: 100% !important;
+    padding: 15px 0 !important;
+    border-radius: 15px !important;
+  }
+
+  /* 5. 아이폰 하단 홈 바 영역 확보 */
+  .footer-action {
+    padding-bottom: env(safe-area-inset-bottom);
+    justify-content: center !important;
+  }
+}
