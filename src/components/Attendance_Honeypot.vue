@@ -35,7 +35,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const transactions = ref([]);
 const attendanceCount = ref(0);
 const isTodayRecorded = ref(false);
@@ -101,7 +101,7 @@ const calculateAttendance = () => {
 
 const fetchData = async () => {
   try {
-    const res = await axios.get('http://localhost:3000/transactions');
+    const res = await axios.get(`${API_URL}/transactions`);
     transactions.value = res.data;
     calculateAttendance();
   } catch (error) {
