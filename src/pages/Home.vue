@@ -142,7 +142,23 @@ const filteredTransactions = computed(() => {
 // 최근 내역 5개 (최신순)
 const recentTransactions = computed(() => {
   return [...transactions.value]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .sort((a, b) => {
+      // 날짜(date)가 다르면 날짜순 정렬 (최신날짜가 위로)
+      if (a.date !== b.date) {
+        return new Date(b.date) - new Date(a.date);
+      }
+
+      // 날짜가 같다면 생성시간(created_at)으로 정렬
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+      if (timeA !== timeB) {
+        return timeB - timeA;
+      }
+
+      // 생성시간마저 같다면(또는 없다면) id를 문자열로 비교
+      return b.id.localeCompare(a.id);
+    })
     .slice(0, 5);
 });
 
