@@ -92,7 +92,13 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 export default {
   props: {
+    initialDate: {
+      // Home에서 넘겨준 선택된 날짜
+      type: String,
+      default: null,
+    },
     editData: {
+      // 기존 수정용 Props
       type: Object,
       default: null,
     },
@@ -100,7 +106,9 @@ export default {
   data() {
     return {
       transactionDate:
-        this.editData?.date || new Date().toISOString().substr(0, 10),
+        this.editData?.date ||
+        this.initialDate ||
+        new Date().toISOString().substr(0, 10),
       rawAmount: this.editData?.amount || 0,
       transactionType: '',
       selectedCategory: '',

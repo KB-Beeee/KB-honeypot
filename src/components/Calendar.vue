@@ -23,7 +23,7 @@ const calendarOptions = reactive({
   locale: 'ko', // 한국어 설정 (선택 사항)
 
   height: 'auto',
-  
+
   // 1. 날짜 뒤의 '일' 제거 (숫자만 남기기)
   dayCellContent: function (info) {
     return info.date.getDate(); // '1일'에서 '1'만 반환
@@ -125,5 +125,5 @@ fetchTransactions();
 </script>
 
 <style scoped>
-@import '../assets/css/calendar.css';
+@import '@/assets/css/calendar.css';
 </style>
