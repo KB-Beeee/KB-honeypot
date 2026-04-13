@@ -35,12 +35,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+
 const API_URL = import.meta.env.VITE_API_URL;
 const transactions = ref([]);
 const attendanceCount = ref(0);
 const isTodayRecorded = ref(false);
 
-// 7일을 100% 기준으로 퍼센트 계산
+// 7일 연속 출석을 100% 기준으로 계산
 const attendancePercentage = computed(() => {
   const percent = Math.floor((attendanceCount.value / 7) * 100);
   return percent > 100 ? 100 : percent;
@@ -60,40 +61,48 @@ const currentPotImage = computed(() => {
   const count = attendanceCount.value;
   let index = 0;
 
+  // 꿀단지 단계별 이미지 매칭 (인덱스 오류 수정)
   if (count === 0) index = 0;
   else if (count === 1) index = 1;
   else if (count === 2) index = 2;
   else if (count === 3) index = 3;
-  else if (count === 4) index = 3;
-  else if (count === 5) index = 4;
-  else if (count === 6) index = 5;
-  else index = 6;
+  else if (count === 4)
+    index = 4; // 4단계 정상 반영
+  else if (count === 5) index = 5;
+  else index = 6; // 6일 이상은 모두 만렙 꿀단지
 
   return potImages[index];
 });
 
 const calculateAttendance = () => {
-  const recordedDates = new Set(
-    transactions.value.map((item) => item.created_at.split('T')[0]),
-  );
+  // 사용자가 입력한 '거래 날짜'인 date를 기준으로 Set 생성
+  const recordedDates = new Set(transactions.value.map((item) => item.date));
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  // 현재 날짜 구하기 (KST 기준 yyyy-mm-dd)
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
   isTodayRecorded.value = recordedDates.has(todayStr);
 
   let count = 0;
   let checkDate = new Date();
 
+  // 오늘 기록이 없으면 '어제'부터 과거로 역추적
   if (!isTodayRecorded.value) {
     checkDate.setDate(checkDate.getDate() - 1);
   }
 
   while (true) {
-    const formattedCheckDate = checkDate.toISOString().split('T')[0];
+    const y = checkDate.getFullYear();
+    const m = String(checkDate.getMonth() + 1).padStart(2, '0');
+    const d = String(checkDate.getDate()).padStart(2, '0');
+    const formattedCheckDate = `${y}-${m}-${d}`;
+
     if (recordedDates.has(formattedCheckDate)) {
       count++;
-      checkDate.setDate(checkDate.getDate() - 1);
+      checkDate.setDate(checkDate.getDate() - 1); // 하루 전으로 이동하여 계속 확인
     } else {
-      break;
+      break; // 기록이 끊긴 날을 만나면 루프 종료
     }
   }
   attendanceCount.value = count;
@@ -102,7 +111,8 @@ const calculateAttendance = () => {
 const fetchData = async () => {
   try {
     const res = await axios.get(`${API_URL}/transactions`);
-    transactions.value = res.data;
+    // 삭제되지 않은 데이터만 사용
+    transactions.value = res.data.filter((t) => !t.is_deleted);
     calculateAttendance();
   } catch (error) {
     console.error('데이터 로드 실패:', error);
@@ -115,7 +125,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 기존 스타일 유지 */
+/* 텍스트 강조 스타일 */
 .highlight {
   color: #f6bd60;
   font-size: 3rem;
@@ -123,23 +133,26 @@ onMounted(() => {
   -webkit-text-stroke: 0.1px #ffd289;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .attendance-card {
   text-align: center;
   padding: 10px;
 }
+
 .attendance-title {
   font-size: 2.5rem;
   color: #555;
   margin-bottom: 15px;
   font-weight: lighter;
 }
+
 .sub-text {
   font-size: 0.95rem;
   color: #888;
   margin-top: 5px;
 }
 
-/* 퍼센트 표시를 위한 스타일 추가 */
+/* 꿀단지 컨테이너 */
 .pot-image-wrapper {
   margin-top: 5px;
   display: flex;
@@ -151,12 +164,13 @@ onMounted(() => {
   display: inline-block;
 }
 
+/* 호버 시 퍼센트 표시 UI */
 .attendance-percentage {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(255, 255, 255, 0.9);
   color: #f6bd60;
   padding: 10px 20px;
   border-radius: 20px;
@@ -164,16 +178,16 @@ onMounted(() => {
   font-size: 1.5rem;
   opacity: 0;
   transition: opacity 0.3s ease;
-  pointer-events: none; /* 이미지 호버 방해 금지 */
+  pointer-events: none;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border: 2px solid #f6bd60;
 }
 
-/* 호버 시 퍼센트 표시 */
 .pot-container:hover .attendance-percentage {
   opacity: 1;
 }
 
+/* 꿀단지 이미지 스타일 */
 .honey-pot-img {
   width: 200px;
   height: auto;
@@ -182,12 +196,12 @@ onMounted(() => {
 }
 
 .honey-pot-img.not-recorded {
-  filter: grayscale(0.3) opacity(0.7);
+  filter: grayscale(0.2) opacity(0.8);
   transform: scale(0.95);
 }
 
 .honey-pot-img:hover {
   transform: scale(1.05) rotate(-3deg);
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 </style>
