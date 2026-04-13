@@ -328,7 +328,7 @@ const closeAddModal = () => {
 }
 .fab-btn {
   position: fixed;
-  bottom: 40px;
+  bottom: 80px;
   right: 40px;
 
   width: 70px;
