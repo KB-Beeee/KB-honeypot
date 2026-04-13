@@ -2,13 +2,14 @@
   <div class="transaction-container">
     <div class="header">
       <span class="close-x" @click="$emit('close')">X</span>
-      <div class="date-wrapper">
+      <div class="date-wrapper" @click="openDatePicker">
         <div class="date-display">
           {{ formattedDate }}
           <span class="calendar-icon">📅</span>
         </div>
         <input
           type="date"
+          ref="dateInput"
           class="hidden-date-input"
           v-model="transactionDate"
         />
@@ -92,19 +93,12 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 export default {
   props: {
-    initialDate: {
-      // Home에서 넘겨준 선택된 날짜
-      type: String,
-      default: null,
-    },
-    editData: {
-      // 기존 수정용 Props
-      type: Object,
-      default: null,
-    },
+    initialDate: { type: String, default: null },
+    editData: { type: Object, default: null },
   },
   data() {
     return {
+      // 1순위: 수정 데이터, 2순위: 홈 달력 선택 날짜, 3순위: 오늘
       transactionDate:
         this.editData?.date ||
         this.initialDate ||
@@ -113,10 +107,7 @@ export default {
       transactionType: '',
       selectedCategory: '',
       memo: this.editData?.memo || '',
-      categoryGroups: {
-        income: [],
-        expense: [],
-      },
+      categoryGroups: { income: [], expense: [] },
       rawCategories: [],
     };
   },
@@ -136,7 +127,6 @@ export default {
   },
   async created() {
     await this.fetchCategories();
-    // 수정 모드일때
     if (this.editData) {
       const category = this.rawCategories.find(
         (c) => c.id === this.editData.category_id,
@@ -148,13 +138,21 @@ export default {
     }
   },
   methods: {
+    // 날짜 클릭 시 input date 강제 실행
+    openDatePicker() {
+      // 최신 브라우저에서는 showPicker() 호출, 아니면 단순 클릭
+      if (this.$refs.dateInput.showPicker) {
+        this.$refs.dateInput.showPicker();
+      } else {
+        this.$refs.dateInput.click();
+      }
+    },
     async fetchCategories() {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/categories`,
         );
         this.rawCategories = response.data;
-
         this.categoryGroups.income = this.rawCategories.filter(
           (cat) => cat.type === 'income',
         );
@@ -180,7 +178,7 @@ export default {
         !this.transactionType ||
         !this.selectedCategory
       ) {
-        alert('금액, 유형, 카테고리를 모두 입력해주세요🍯');
+        Swal.fire({ icon: 'warning', text: '필수 항목을 모두 입력해주세요🍯' });
         return;
       }
 
@@ -191,8 +189,6 @@ export default {
       );
 
       const now = new Date();
-
-      // 공통
       const payload = {
         user_id: 'u001',
         category_id: foundCategory ? foundCategory.id : 'unknown',
@@ -201,17 +197,16 @@ export default {
         memo: this.memo,
         is_deleted: false,
       };
+
       const baseUrl = import.meta.env.VITE_API_URL;
       try {
         let res;
         if (this.editData) {
-          // 수정 모드
           res = await axios.patch(
             `${baseUrl}/transactions/${this.editData.id}`,
             payload,
           );
         } else {
-          // 등록 모드
           const customId = `t${now.getTime()}`;
           res = await axios.post(`${baseUrl}/transactions`, {
             ...payload,
@@ -221,31 +216,21 @@ export default {
         }
 
         if (res.status === 200 || res.status === 201) {
-          // 기본 alert 대신 사용
           await Swal.fire({
             title: '완료!',
             text: this.editData
               ? '수정 완료되었습니다🍯'
               : '거래 내역이 저장되었습니다🍯',
             icon: 'success',
-            confirmButtonColor: '#f5cac3', // 가계부 테마색에 맞춰보세요
+            confirmButtonColor: '#f5cac3',
             confirmButtonText: '확인',
           });
           this.$emit('refresh');
           this.$emit('close');
-          // window.location.reload();
         }
       } catch (error) {
-        console.error('작업 실패:', error);
-        alert('작업에 실패했습니다..🍯');
+        Swal.fire({ icon: 'error', text: '작업에 실패했습니다🍯' });
       }
-    },
-    resetForm() {
-      this.rawAmount = 0;
-      this.transactionType = '';
-      this.selectedCategory = '';
-      this.memo = '';
-      this.transactionDate = new Date().toISOString().substr(0, 10);
     },
   },
 };
@@ -253,4 +238,14 @@ export default {
 
 <style scoped>
 @import '@/assets/css/addTransaction.css';
+.date-wrapper {
+  cursor: pointer;
+}
+.hidden-date-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
 </style>
