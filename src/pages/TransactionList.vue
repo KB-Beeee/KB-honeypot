@@ -126,7 +126,11 @@
   </div>
 
   <div class="modal-overlay" v-if="isAddModalOpen" @click.self="closeAddModal">
-    <AddTransaction :editData="editingItem" @close="closeAddModal" />
+    <AddTransaction
+      :editData="editingItem"
+      @close="closeAddModal"
+      @refresh="store.fetchTransactions"
+    />
   </div>
 </template>
 
