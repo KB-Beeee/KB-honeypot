@@ -49,7 +49,7 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import Attendance_Honeypot from './Attendance_Honeypot.vue';
-
+const API_URL = import.meta.env.VITE_API_URL;
 // 상태 관리
 const transactions = ref([]);
 const categories = ref([]);
@@ -82,8 +82,8 @@ const currentPotImage = computed(() => {
 const fetchData = async () => {
   try {
     const [transRes, catRes] = await Promise.all([
-      axios.get('http://localhost:3000/transactions'),
-      axios.get('http://localhost:3000/categories'),
+      axios.get(`${API_URL}/transactions`),
+      axios.get(`${API_URL}/categories`),
     ]);
     transactions.value = transRes.data.filter((t) => t.is_deleted === false);
     categories.value = catRes.data;

@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia';
 import { reactive, computed } from 'vue';
 import axios from 'axios';
-
+const API_URL = import.meta.env.VITE_API_URL;
 export const useTransactionStore = defineStore('transaction', () => {
-  const BASEURI = 'http://localhost:3000/transactions';
+  const BASEURI = `${API_URL}/transactions`;
+  const CATEGORY_URI = `${API_URL}/categories`;
 
   const state = reactive({
     transactions: [],
@@ -20,7 +21,7 @@ export const useTransactionStore = defineStore('transaction', () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/categories');
+      const response = await axios.get(CATEGORY_URI);
       state.categories = response.data;
     } catch (error) {
       console.error('카테고리 로드 실패:', error);

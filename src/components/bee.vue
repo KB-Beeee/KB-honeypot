@@ -14,7 +14,7 @@ import cryingBee from '@/assets/images/꿀벌/우는꿀벌.png';
 import basicBee from '@/assets/images/꿀벌/기본꿀벌.png';
 import happyBee from '@/assets/images/꿀벌/빵긋꿀벌.png';
 import smirkingBee from '@/assets/images/꿀벌/피식꿀벌.png';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const props = defineProps({
   customClass: {
     type: String,
@@ -84,7 +84,7 @@ const fetchData = async () => {
   try {
     loading.value = true;
     // 출석 기록이 담긴 transactions API 호출
-    const res = await axios.get('http://localhost:3000/transactions');
+    const res = await axios.get(`${API_URL}/transactions`);
     transactions.value = res.data;
     calculateAttendance();
   } catch (error) {

@@ -10,7 +10,7 @@ import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import axios from 'axios';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const emit = defineEmits(['date-selected']);
 const calendarOptions = reactive({
   plugins: [dayGridPlugin, interactionPlugin],
@@ -48,8 +48,8 @@ const states = reactive({
 });
 
 // 거래 내역 url
-const transactionUrl = 'http://localhost:3000/transactions';
-const categoryUrl = 'http://localhost:3000/categories';
+const transactionUrl = `${API_URL}/transactions`;
+const categoryUrl = `${API_URL}/categories`;
 
 const fetchTransactions = async () => {
   states.isLoading = true;

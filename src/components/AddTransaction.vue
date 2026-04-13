@@ -150,7 +150,9 @@ export default {
   methods: {
     async fetchCategories() {
       try {
-        const response = await axios.get('http://localhost:3000/categories');
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/categories`,
+        );
         this.rawCategories = response.data;
 
         this.categoryGroups.income = this.rawCategories.filter(
@@ -199,19 +201,19 @@ export default {
         memo: this.memo,
         is_deleted: false,
       };
-
+      const baseUrl = import.meta.env.VITE_API_URL;
       try {
         let res;
         if (this.editData) {
           // 수정 모드
           res = await axios.patch(
-            `http://localhost:3000/transactions/${this.editData.id}`,
+            `${baseUrl}/transactions/${this.editData.id}`,
             payload,
           );
         } else {
           // 등록 모드
           const customId = `t${now.getTime()}`;
-          res = await axios.post('http://localhost:3000/transactions', {
+          res = await axios.post(`${baseUrl}/transactions`, {
             ...payload,
             id: String(customId),
             created_at: now.toISOString(),
