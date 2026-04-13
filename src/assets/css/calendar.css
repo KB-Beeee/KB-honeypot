@@ -3,18 +3,19 @@
 /* ========================================= */
 .calendar-container {
   width: 100%;
-  max-width: 800px; 
+  max-width: 100%; 
   margin: 0 auto; 
 }
 
 .calendar-wrapper {
   width: 100%;
-  max-width: 600px; 
+  max-width: 100%; 
   margin: 0 auto; 
 }
 
+/* 🌟 전체 폰트 크기 축소 (기존 1rem -> 0.85rem) */
 :deep(.fc) {
-  font-size: 0.95rem; 
+  font-size: 0.85rem; 
 }
 
 /* ========================================= */
@@ -27,13 +28,16 @@
 :deep(.fc-col-header-cell-cushion) {
   color: black !important; 
   text-decoration: none !important;
+  font-size: 0.95rem; /* 🌟 요일 글씨 축소 */
+  padding: 8px 0 !important; /* 위아래 여백 살짝 축소 */
 }
 
 :deep(.fc-daygrid-day-number) {
   color: black !important; 
   text-decoration: none !important;
-  padding-right: 15px !important; 
+  padding-right: 8px !important; 
   display: inline-block; 
+  font-size: 0.95rem; /* 🌟 날짜 숫자 축소 */
 }
 
 /* ========================================= */
@@ -49,44 +53,33 @@
 }
 
 :deep(.fc-daygrid-day-top) {
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 /* ========================================= */
-/* 4. 상단 버튼(이전, 다음, 오늘 등) 스타일 커스텀 */
+/* 4. 상단 버튼 스타일 */
 /* ========================================= */
-:deep(.fc-button-primary) {
-  background-color: #f6bd60 !important;
-  border-color: #f6bd60 !important;
-  color: white !important;
-}
-
-:deep(.fc-button-primary:hover) {
-  background-color: #f6bd60 !important;
-  border-color: #f6bd60 !important;
-}
-
+:deep(.fc-button-primary) { background-color: #f6bd60 !important; border-color: #f6bd60 !important; color: white !important; }
+:deep(.fc-button-primary:hover) { background-color: #f6bd60 !important; border-color: #f6bd60 !important; }
 :deep(.fc-button-primary:focus),
 :deep(.fc-button-primary:active),
-:deep(.fc-button-primary:not(:disabled):active) {
-  background-color: #f6bd60 !important; 
-  border-color: #f6bd60 !important; 
-  box-shadow: 0 0 0 0.2rem #84a59d !important; 
-}
+:deep(.fc-button-primary:not(:disabled):active) { background-color: #f6bd60 !important; border-color: #f6bd60 !important; box-shadow: 0 0 0 0.2rem #84a59d !important; }
 
 /* ========================================= */
-/* 5. ⭐️ 날짜 칸 및 내역(이벤트) 찌그러짐 방지 ⭐️ */
+/* 5. ⭐️ 날짜 칸 및 내역(이벤트) 스타일 ⭐️ */
 /* ========================================= */
 :deep(.fc-daygrid-day-frame) {
-  min-height: 90px !important; /* 칸 높이 시원하게 보장 */
+  /* 🌟 핵심! 75% 화면 비율에 맞춰 높이를 대폭 축소 (기존 130px -> 95px) */
+  min-height: 95px !important; 
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
+  justify-content: flex-start; 
 }
 
 :deep(.fc-daygrid-day-events) {
   width: 100%;
-  margin-bottom: 2px !important; 
+  margin-top: auto !important; 
+  margin-bottom: 3px !important; 
   display: flex;
   flex-direction: column; 
   gap: 2px; 
@@ -99,25 +92,44 @@
   margin: 0 !important; 
 }
 
-/* 👇 글씨가 칸을 뚫고 나가지 않도록 완벽 방어! */
 :deep(.fc-event-main) {
-  display: block; /* flex 대신 block을 써야 말줄임표가 작동합니다 */
+  display: block; 
   text-align: center;
   font-weight: 700; 
   width: 100%;
-  font-size: 0.75rem; /* 모바일에 맞춰 글씨 살짝 축소 */
-  letter-spacing: -0.5px; /* 글자 사이 간격 좁힘 */
   
-  /* 긴 금액 처리의 핵심 */
+  /* 🌟 내역 금액 글자 크기도 축소 (기존 0.9rem -> 0.75rem) */
+  font-size: 0.75rem; 
+  letter-spacing: -0.5px; 
+  
   white-space: nowrap; 
   overflow: hidden; 
-  text-overflow: ellipsis; /* 넘치면 2,000... 으로 표시 */
+  text-overflow: ellipsis; 
 }
 
-:deep(.event-income .fc-event-main) {
-  color: #e53e3e !important; 
-}
+:deep(.event-income .fc-event-main) { color: #e53e3e !important; }
+:deep(.event-expense .fc-event-main) { color: #3182ce !important; }
 
-:deep(.event-expense .fc-event-main) {
-  color: #3182ce !important; 
+/* --------------------------------------------------- */
+/* ✨ 반응형 (모바일 430px 이하일 때) ✨ */
+/* --------------------------------------------------- */
+@media screen and (max-width: 430px) {
+  
+  :deep(.fc) {
+    font-size: 0.8rem; 
+  }
+
+  /* 모바일은 높이가 80px로 더 타이트하게 들어갑니다 */
+  :deep(.fc-daygrid-day-frame) {
+    min-height: 80px !important; 
+  }
+  
+  :deep(.fc-col-header-cell-cushion),
+  :deep(.fc-daygrid-day-number) {
+    font-size: 0.85rem; 
+  }
+
+  :deep(.fc-event-main) {
+    font-size: 0.65rem; 
+  }
 }
