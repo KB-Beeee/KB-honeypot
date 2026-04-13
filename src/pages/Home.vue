@@ -105,14 +105,14 @@ const categories = ref([]);
 const loading = ref(true);
 const selectedDate = ref(null);
 const isAddModalOpen = ref(false);
-
+const API_URL = import.meta.env.VITE_API_URL;
 // 데이터 가져오기
 const fetchData = async () => {
   try {
     loading.value = true;
     const [transRes, catRes] = await Promise.all([
-      axios.get('http://localhost:3000/transactions'),
-      axios.get('http://localhost:3000/categories'),
+      axios.get(`${API_URL}/transactions`),
+      axios.get(`${API_URL}/categories`),
     ]);
     // 삭제되지 않은 내역만 필터링
     transactions.value = transRes.data.filter((t) => t.is_deleted === false);
