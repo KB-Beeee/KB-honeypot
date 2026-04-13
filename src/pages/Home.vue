@@ -11,6 +11,7 @@
           <div class="calendar-container">
             <Calendar @date-selected="handleDateSelected" />
           </div>
+
           <div v-if="selectedDate" class="day-detail-panel">
             <div class="detail-header">
               <h3>{{ formatDateDetail(selectedDate) }} 내역</h3>
@@ -38,17 +39,22 @@
                 </span>
               </div>
             </div>
+
+            <div class="detail-footer">
+              <button class="fab-btn shadow-sm" @click="isAddModalOpen = true">
+                <span class="plus-icon">+</span>
+              </button>
+            </div>
           </div>
         </div>
+
         <h1 class="title">최근 내역</h1>
 
         <div class="content-card transaction-list-card">
           <div v-if="loading" class="loading">데이터를 불러오는 중...</div>
-
           <div v-else-if="recentTransactions.length === 0" class="empty">
             최근 내역이 없습니다.
           </div>
-
           <div
             v-else
             v-for="item in recentTransactions"
@@ -56,12 +62,10 @@
             class="transaction-item"
           >
             <span class="date">{{ formatDate(item.date) }}</span>
-
             <span :class="['amount', getTransType(item.category_id)]">
               {{ getTransType(item.category_id) === 'expense' ? '-' : '' }}
               {{ item.amount.toLocaleString() }}원
             </span>
-
             <span class="category">{{
               getCategoryName(item.category_id)
             }}</span>
@@ -73,6 +77,18 @@
     <aside class="right-section">
       <Card />
     </aside>
+
+    <div
+      class="modal-overlay"
+      v-if="isAddModalOpen"
+      @click.self="isAddModalOpen = false"
+    >
+      <AddTransaction
+        :initialDate="selectedDate"
+        @close="isAddModalOpen = false"
+        @refresh="fetchData"
+      />
+    </div>
   </div>
 </template>
 
@@ -81,14 +97,16 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import Calendar from '../components/Calendar.vue';
 import Card from '../components/Card.vue';
+import AddTransaction from '../components/AddTransaction.vue';
 
 // 상태 관리
 const transactions = ref([]);
 const categories = ref([]);
 const loading = ref(true);
-const selectedDate = ref(null); //클릭 날짜 저장
+const selectedDate = ref(null);
+const isAddModalOpen = ref(false);
 
-// API 데이터 가져오기 (Transactions & Categories)
+// 데이터 가져오기
 const fetchData = async () => {
   try {
     loading.value = true;
@@ -96,6 +114,7 @@ const fetchData = async () => {
       axios.get('http://localhost:3000/transactions'),
       axios.get('http://localhost:3000/categories'),
     ]);
+    // 삭제되지 않은 내역만 필터링
     transactions.value = transRes.data.filter((t) => t.is_deleted === false);
     categories.value = catRes.data;
   } catch (error) {
@@ -109,37 +128,35 @@ onMounted(() => {
   fetchData();
 });
 
-//날짜 클릭 핸들러
+// 날짜 클릭 핸들러
 const handleDateSelected = (date) => {
   selectedDate.value = date;
 };
 
-//선택된 날짜 내역만 필터링
+// 선택된 날짜 내역 필터링
 const filteredTransactions = computed(() => {
   if (!selectedDate.value) return [];
   return transactions.value.filter((t) => t.date === selectedDate.value);
 });
 
-// 최근 날짜순 5개 추출 로직
+// 최근 내역 5개 (최신순)
 const recentTransactions = computed(() => {
   return [...transactions.value]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 });
 
-// 카테고리 ID로 'income' 또는 'expense' 타입 찾기
+// 유틸리티 함수들
 const getTransType = (categoryId) => {
   const category = categories.value.find((c) => c.id === categoryId);
   return category ? category.type : 'expense';
 };
 
-// 카테고리 ID로 카테고리 이름 찾기
 const getCategoryName = (id) => {
   const category = categories.value.find((c) => c.id === id);
   return category ? category.name : '기타';
 };
 
-// 날짜 포맷 (2026-04-07 -> 04. 07)
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
@@ -152,6 +169,7 @@ const formatDateDetail = (dateStr) => {
   return `${parseInt(m)}월 ${parseInt(d)}일`;
 };
 </script>
+
 <style scoped>
-@import '../assets/css/home.css';
+@import '@/assets/css/home.css';
 </style>
